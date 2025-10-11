@@ -2,20 +2,20 @@
   "name": "Southern Leyte Earthquake Alert System",
   "short_name": "SL EarthquakeAlert",
   "description": "Real-time earthquake monitoring and email alerts for Southern Leyte, Philippines",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#003366",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/images/icon-192.png",
+      "src": "./images/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/images/icon-512.png",
+      "src": "./images/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -24,7 +24,7 @@
   "categories": ["news", "utilities", "lifestyle"],
   "screenshots": [
     {
-      "src": "/images/screenshot1.png",
+      "src": "./images/screenshot1.png",
       "sizes": "540x720",
       "type": "image/png"
     }

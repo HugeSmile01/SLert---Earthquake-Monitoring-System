@@ -2,10 +2,11 @@ import L from 'leaflet';
 import type { Earthquake } from './types';
 import { earthquakeService } from './earthquakeService';
 
+// Use relative paths that work with Vite's public directory and GitHub Pages base path
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: '/images/marker-icon-2x.png',
-  iconUrl: '/images/marker-icon.png',
-  shadowUrl: '/images/marker-shadow.png',
+  iconRetinaUrl: './images/marker-icon-2x.png',
+  iconUrl: './images/marker-icon.png',
+  shadowUrl: './images/marker-shadow.png',
 });
 
 class MapService {
