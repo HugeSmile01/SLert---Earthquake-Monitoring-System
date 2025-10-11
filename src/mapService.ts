@@ -3,11 +3,11 @@ import type { Earthquake } from './types';
 import { earthquakeService } from './earthquakeService';
 
 // Fix Leaflet default icon issue with bundlers
-// Set icon URLs to use CDN versions
+// Use local marker icons instead of CDN for security and reliability
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconRetinaUrl: '/images/marker-icon-2x.png',
+  iconUrl: '/images/marker-icon.png',
+  shadowUrl: '/images/marker-shadow.png',
 });
 
 class MapService {

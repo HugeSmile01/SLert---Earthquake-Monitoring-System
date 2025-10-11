@@ -19,6 +19,7 @@
 - ✅ Local storage for non-sensitive data only
 - ✅ HTTPS recommended for production
 - ✅ CSP headers recommended
+- ✅ Local bundling of map marker assets (no external CDN dependencies)
 
 ### Future Security Enhancements
 1. Implement rate limiting for API calls
