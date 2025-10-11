@@ -233,6 +233,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - Use environment variables for sensitive configuration
 - The application doesn't collect personal data by default
 - SMS subscriptions are stored locally (implement proper backend for production)
+- Map marker icons are bundled locally (no external CDN dependencies)
+- See [SECURITY.md](./SECURITY.md) for more details
 
 ## 📄 License
 
