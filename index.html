@@ -349,7 +349,8 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // Use relative path - Vite will handle base path correctly
+                // Use relative path - Vite's base config (/EarthquakeSys/) handles GitHub Pages deployment
+                // The service worker will be registered at the correct path relative to the base URL
                 navigator.serviceWorker.register('./sw.js')
                     .then((registration) => {
                         console.log('ServiceWorker registered:', registration);
