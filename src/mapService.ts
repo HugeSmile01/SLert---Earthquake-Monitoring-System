@@ -3,16 +3,11 @@ import type { Earthquake } from './types';
 import { earthquakeService } from './earthquakeService';
 
 // Fix Leaflet default icon issue with bundlers
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
-// @ts-ignore
-delete L.Icon.Default.prototype._getIconUrl;
+// Set icon URLs to use CDN versions
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
 class MapService {
@@ -36,7 +31,7 @@ class MapService {
     }).addTo(this.map);
 
     // Add Philippines boundary highlight
-    const philippinesBounds = L.rectangle(
+    L.rectangle(
       [[4.5, 116.0], [21.0, 127.0]],
       {
         color: '#003366',
