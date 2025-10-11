@@ -1,6 +1,10 @@
 # 🌏 Southern Leyte Earthquake Alert System
 
-A comprehensive, real-time earthquake monitoring and alert system specifically designed for Southern Leyte, Philippines. This Progressive Web Application provides live earthquake data, email alerts with infographics, interactive maps, community check-in features, and educational resources to help keep the people of Southern Leyte safe.
+A comprehensive, real-time earthquake monitoring and alert system specifically designed for Southern Leyte, Philippines. This Progressive Web Application provides live earthquake data from USGS API, instant alerts using SweetAlert2, interactive maps, community check-in features, and educational resources.
+
+**Developer:** John Rish Ladica - Southern Leyte, Philippines
+
+**⚠️ Important Disclaimer:** This is an independent system created by a developer from Southern Leyte. It is NOT an official government system. The system uses publicly available APIs (USGS Earthquake API) to fetch earthquake data. Any inaccuracies in the data are from the source API, not from this system. Always follow official government alerts and guidelines from PHIVOLCS and NDRRMC.
 
 ![System Status](https://img.shields.io/badge/status-active-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
@@ -11,7 +15,8 @@ A comprehensive, real-time earthquake monitoring and alert system specifically d
 ### Core Features
 - **Real-time Earthquake Monitoring** - Live data from USGS API filtered for Southern Leyte region
 - **Interactive Map Visualization** - Leaflet.js powered map showing earthquake locations and magnitudes
-- **Email Alert System** - Automatic email notifications with infographics for significant earthquakes
+- **SweetAlert2 Notifications** - Beautiful, user-friendly alerts for significant earthquakes
+- **Firebase Integration** - Ready for real-time data storage and push notifications
 - **Progressive Web App** - Install as a mobile app with offline capability
 - **Community Check-In** - Let friends and family know you're safe after an earthquake
 - **Educational Resources** - Comprehensive earthquake preparedness and safety guides
@@ -24,7 +29,7 @@ A comprehensive, real-time earthquake monitoring and alert system specifically d
 - Earthquakes in last 24 hours
 - Earthquakes in last 7 days
 - Strongest earthquake today
-- Email alerts sent count
+- Alerts triggered count
 - System status indicators
 
 ## 🛠️ Technology Stack
@@ -33,10 +38,10 @@ A comprehensive, real-time earthquake monitoring and alert system specifically d
 - **Build Tool:** Vite
 - **Maps:** Leaflet.js with OpenStreetMap
 - **Data Source:** USGS Earthquake API
-- **Email Service:** Ready for integration with email providers
+- **Alerts:** SweetAlert2 for beautiful notifications
 - **PWA Features:** Service Worker, Web App Manifest
 - **Security:** Input validation, rate limiting, CSP headers
-- **Backend (Future):** Firebase (Authentication, Firestore, Cloud Functions)
+- **Backend:** Firebase (Authentication, Firestore, Cloud Functions)
 
 ## 📋 Prerequisites
 
@@ -77,94 +82,48 @@ npm run preview
 
 The built files will be in the `dist/` directory, ready for deployment.
 
-## 📱 Email Alert Configuration
+## 🔥 Firebase Integration
 
-The system is ready for email integration with various email service providers.
+The system uses Firebase for real-time data storage and notifications. To enable Firebase:
 
-**⚠️ IMPORTANT:** For production use, email sending MUST be implemented server-side. Never expose API keys in the client-side code.
+1. **Create a Firebase Project:**
+   - Go to [Firebase Console](https://console.firebase.google.com/)
+   - Create a new project
+   - Enable Firestore Database
+   - Enable Authentication (optional for user management)
 
-### To Enable Email Alerts:
-
-1. **Set up a backend API server** (Required for production):
-   - Create a Node.js/Express backend or serverless function
-   - Store API keys securely on the server
-   - Implement email sending endpoints
-
-2. **Choose an email service provider:**
-   - **SendGrid:** https://sendgrid.com/
-   - **Mailgun:** https://www.mailgun.com/
-   - **Amazon SES:** https://aws.amazon.com/ses/
-
-3. **Example Backend Implementation** (Node.js/Express):
-   ```javascript
-   // server.js
-   const express = require('express');
-   const sgMail = require('@sendgrid/mail');
-   
-   sgMail.setApiKey(process.env.SENDGRID_API_KEY); // Server-side only!
-   
-   app.post('/api/subscribe', async (req, res) => {
-     const { email, threshold, location } = req.body;
-     
-     // Validate inputs server-side
-     // Store in database
-     // Send confirmation email
-     
-     const msg = {
-       to: email,
-       from: 'alerts@southernleyte-earthquake.ph',
-       subject: 'Earthquake Alert Subscription Confirmed',
-       html: `<p>You're subscribed to alerts for ${location}</p>`
-     };
-     
-     await sgMail.send(msg);
-     res.json({ success: true });
-   });
-   ```
-
-4. **Update the frontend** to call your backend API:
-   ```typescript
-   // In emailService.ts, replace the subscribeEmail method:
-   const response = await fetch('/api/subscribe', {
-     method: 'POST',
-     headers: { 'Content-Type': 'application/json' },
-     body: JSON.stringify({ email, threshold, location })
-   });
-   ```
-
-5. **Environment variables (server-side only):**
-   ```env
-   SENDGRID_API_KEY=your_api_key
-   EMAIL_FROM=alerts@your-domain.com
-   DATABASE_URL=your_database_url
-   ```
-
-**Current Implementation:** The frontend currently stores subscriptions locally for demonstration. For production, implement a proper backend.
-
-## 🔥 Firebase Integration (Optional)
-
-For advanced features like user authentication and persistent data storage:
-
-1. **Create a Firebase project** at https://console.firebase.google.com/
-
-2. **Enable services:**
-   - Authentication
-   - Firestore Database
-   - Cloud Functions
-
-3. **Update Firebase configuration** in `src/firebase.ts`:
+2. **Configure Firebase:**
+   - Update `src/firebase.ts` with your Firebase config:
    ```typescript
    const firebaseConfig = {
-     apiKey: "your-api-key",
-     authDomain: "your-auth-domain",
-     projectId: "your-project-id",
-     storageBucket: "your-storage-bucket",
-     messagingSenderId: "your-sender-id",
-     appId: "your-app-id"
+     apiKey: "YOUR_API_KEY",
+     authDomain: "YOUR_AUTH_DOMAIN",
+     projectId: "YOUR_PROJECT_ID",
+     storageBucket: "YOUR_STORAGE_BUCKET",
+     messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+     appId: "YOUR_APP_ID"
    };
    ```
 
-4. **Uncomment Firebase initialization code** in the same file
+3. **Initialize Firebase:**
+   - Uncomment the initialization code in `src/firebase.ts`
+   - Import and use Firebase services in your components
+
+4. **Firestore Structure:**
+   ```
+   /alerts
+     - magnitude: number
+     - place: string
+     - time: timestamp
+     - location: string
+   
+   /subscriptions
+     - threshold: number
+     - location: string
+     - userId: string (optional)
+   ```
+
+**Current Implementation:** The system stores data locally for demonstration. For production, implement proper Firebase integration.
 
 ## 📊 API Data Sources
 
@@ -172,10 +131,12 @@ For advanced features like user authentication and persistent data storage:
 - **Endpoint:** `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson`
 - **Update Frequency:** Every 60 seconds
 - **Geographic Filter:** Philippines region (4.5°N-21°N, 116°E-127°E)
+- **Note:** All earthquake data comes from USGS. Any inaccuracies are from the source API, not this application.
 
-### Alternative/Backup Source: PHIVOLCS
-- Website: https://www.phivolcs.dost.gov.ph/
-- Note: PHIVOLCS doesn't provide a public API, but this system can be extended to scrape their data
+### Emergency Information Source
+- **PHIVOLCS:** https://www.phivolcs.dost.gov.ph/ (Official Philippine seismology institute)
+- **NDRRMC:** For disaster response coordination
+- Always follow official government alerts and guidelines
 
 ## 🎨 Customization
 
@@ -298,7 +259,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - Never commit API keys or secrets to the repository
 - Use environment variables for sensitive configuration
 - The application doesn't collect personal data by default
-- Email subscriptions are stored locally (implement proper backend for production)
+- Alert subscriptions are stored locally (implement proper backend for production)
 - Map marker icons are bundled locally (no external CDN dependencies)
 - See [SECURITY.md](./SECURITY.md) for more details
 
@@ -309,21 +270,33 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🙏 Acknowledgments
 
 - **USGS** - For providing free earthquake data API
-- **PHIVOLCS** - Philippine Institute of Volcanology and Seismology
 - **OpenStreetMap** - For map tiles
 - **Leaflet.js** - For map visualization
+- **SweetAlert2** - For beautiful alert notifications
+- **Firebase** - For backend infrastructure
 - All contributors and users of this system
 
-## 📧 Contact
+## 📧 Contact & Developer
+
+**Developer:** John Rish Ladica  
+**Location:** Southern Leyte, Philippines  
+**Purpose:** Community earthquake monitoring and awareness
 
 For questions, suggestions, or support:
 - Create an issue on GitHub
-- Focus Area: Southern Leyte, Philippines
+- This is an independent project, not affiliated with any government agency
 
 ## ⚠️ Disclaimer
 
-This system is designed to complement official government alerts and should not be relied upon as the sole source of earthquake information. Always follow official guidance from PHIVOLCS and local authorities during emergencies.
+**IMPORTANT:** This is an independent system created by John Rish Ladica from Southern Leyte, Philippines. It is NOT an official government system.
+
+- The system uses the USGS Earthquake API to fetch earthquake data
+- Any inaccuracies in earthquake data are from the source API (USGS), not from this system
+- This system is designed to complement official government alerts
+- **Do NOT rely on this as the sole source of earthquake information**
+- Always follow official guidance from PHIVOLCS, NDRRMC, and local authorities during emergencies
+- The developer and this system are not responsible for any damages or losses resulting from the use of this application
 
 ---
 
-**Made with ❤️ for the safety of the people of Southern Leyte**
+**Made with ❤️ for the safety and awareness of the people of Southern Leyte**
