@@ -1,37 +1,26 @@
 import './style.css';
 import { earthquakeService } from './earthquakeService';
 import { mapService } from './mapService';
-import { alertService } from './alertService';
+import { emailService } from './emailService';
 import type { Earthquake } from './types';
 
-// Global state
 let currentEarthquakes: Earthquake[] = [];
 
-/**
- * Initialize the application
- */
 async function init(): Promise<void> {
-  console.log('🌏 Initializing Philippine Earthquake Alert System...');
+  console.log('🌏 Initializing Southern Leyte Earthquake Alert System...');
   
-  // Initialize services
-  alertService.init();
+  emailService.init();
   mapService.initMap('earthquake-map');
 
-  // Setup event listeners
   setupEventListeners();
 
-  // Load initial data
   await refreshData();
 
-  // Set up auto-refresh every 60 seconds
   setInterval(refreshData, 60000);
 
   console.log('✅ System initialized successfully!');
 }
 
-/**
- * Refresh earthquake data
- */
 async function refreshData(): Promise<void> {
   try {
     console.log('🔄 Fetching earthquake data...');
@@ -40,7 +29,7 @@ async function refreshData(): Promise<void> {
     updateDashboard(currentEarthquakes);
     updateEarthquakeList(currentEarthquakes);
     mapService.addEarthquakeMarkers(currentEarthquakes);
-    alertService.checkForAlerts(currentEarthquakes);
+    emailService.checkForAlerts(currentEarthquakes);
     
     updateSystemStatus('api', 'online');
     console.log(`✅ Loaded ${currentEarthquakes.length} earthquakes`);
@@ -50,40 +39,31 @@ async function refreshData(): Promise<void> {
   }
 }
 
-/**
- * Update dashboard statistics
- */
 function updateDashboard(earthquakes: Earthquake[]): void {
   const last24h = earthquakeService.getEarthquakesByTimeRange(earthquakes, 24);
   const last7d = earthquakeService.getEarthquakesByTimeRange(earthquakes, 168);
   const today = earthquakeService.getEarthquakesByTimeRange(earthquakes, 24);
   const strongest = earthquakeService.getStrongestEarthquake(today);
 
-  // Update stat cards
   document.getElementById('stat-24h')!.textContent = last24h.length.toString();
   document.getElementById('stat-7d')!.textContent = last7d.length.toString();
   document.getElementById('stat-strongest')!.textContent = 
     strongest ? `M${strongest.magnitude.toFixed(1)}` : 'N/A';
   
-  // Simulate SMS count
-  const smsCount = last24h.filter(eq => eq.magnitude >= 4.0).length * 10;
-  document.getElementById('stat-sms')!.textContent = smsCount.toString();
+  const emailCount = last24h.filter(eq => eq.magnitude >= 4.0).length * 10;
+  document.getElementById('stat-email')!.textContent = emailCount.toString();
 }
 
-/**
- * Update earthquake list
- */
 function updateEarthquakeList(earthquakes: Earthquake[]): void {
   const listContainer = document.getElementById('earthquake-list');
   if (!listContainer) return;
 
-  // Show only the most recent 10 earthquakes
   const recentEarthquakes = earthquakes.slice(0, 10);
 
   if (recentEarthquakes.length === 0) {
     listContainer.innerHTML = `
       <div class="text-center text-gray-500 py-8">
-        <p>No recent earthquakes detected in the Philippines region.</p>
+        <p>No recent earthquakes detected in Southern Leyte region.</p>
       </div>
     `;
     return;
@@ -124,10 +104,7 @@ function updateEarthquakeList(earthquakes: Earthquake[]): void {
   }).join('');
 }
 
-/**
- * Update system status indicators
- */
-function updateSystemStatus(service: 'api' | 'sms' | 'map', status: 'online' | 'offline'): void {
+function updateSystemStatus(service: 'api' | 'email' | 'map', status: 'online' | 'offline'): void {
   const indicator = document.getElementById(`status-${service}`);
   if (!indicator) return;
 
@@ -135,11 +112,7 @@ function updateSystemStatus(service: 'api' | 'sms' | 'map', status: 'online' | '
   indicator.classList.add(status === 'online' ? 'bg-safe-green' : 'bg-alert-red');
 }
 
-/**
- * Setup event listeners
- */
 function setupEventListeners(): void {
-  // Mobile menu toggle
   const mobileMenuBtn = document.getElementById('mobile-menu-btn');
   const mobileMenu = document.getElementById('mobile-menu');
   
@@ -147,47 +120,39 @@ function setupEventListeners(): void {
     mobileMenu?.classList.toggle('hidden');
   });
 
-  // Refresh button
   document.getElementById('refresh-btn')?.addEventListener('click', async () => {
     await refreshData();
   });
 
-  // SMS form submission
-  document.getElementById('sms-form')?.addEventListener('submit', (e) => {
+  document.getElementById('email-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
     
-    const phoneInput = document.getElementById('phone') as HTMLInputElement;
+    const emailInput = document.getElementById('email') as HTMLInputElement;
     const thresholdSelect = document.getElementById('magnitude-threshold') as HTMLSelectElement;
     const locationInput = document.getElementById('location') as HTMLInputElement;
 
-    if (phoneInput.value && locationInput.value) {
-      alertService.subscribeSMS(
-        phoneInput.value,
+    if (emailInput.value && locationInput.value) {
+      emailService.subscribeEmail(
+        emailInput.value,
         parseFloat(thresholdSelect.value),
         locationInput.value
       );
       
-      // Clear form
-      phoneInput.value = '';
+      emailInput.value = '';
       locationInput.value = '';
     }
   });
 
-  // Check-in button
   document.getElementById('checkin-btn')?.addEventListener('click', () => {
     handleCheckIn();
   });
 
-  // SMS and Map status (always online for now)
-  updateSystemStatus('sms', 'online');
+  updateSystemStatus('email', 'online');
   updateSystemStatus('map', 'online');
 }
 
-/**
- * Handle user check-in
- */
 function handleCheckIn(): void {
-  const location = prompt('Enter your location (city/municipality):');
+  const location = prompt('Enter your location (city/municipality in Southern Leyte):');
   if (!location) return;
 
   const checkIn = {
@@ -195,20 +160,15 @@ function handleCheckIn(): void {
     timestamp: Date.now(),
   };
 
-  // In production, save to Firebase
   const checkIns = JSON.parse(localStorage.getItem('check_ins') || '[]');
   checkIns.unshift(checkIn);
   localStorage.setItem('check_ins', JSON.stringify(checkIns.slice(0, 50)));
 
-  // Update UI
   updateCheckInList();
-  alertService.showAlert(`✅ Check-in recorded for ${location}. Stay safe!`, 'info');
-  setTimeout(() => alertService.hideAlert(), 3000);
+  emailService.showAlert(`✅ Check-in recorded for ${location}. Stay safe!`, 'info');
+  setTimeout(() => emailService.hideAlert(), 3000);
 }
 
-/**
- * Update check-in list display
- */
 function updateCheckInList(): void {
   const container = document.getElementById('checkin-list');
   if (!container) return;
@@ -231,14 +191,10 @@ function updateCheckInList(): void {
   `).join('');
 }
 
-/**
- * Close alert banner
- */
 (window as any).closeAlert = () => {
-  alertService.hideAlert();
+  emailService.hideAlert();
 };
 
-// Initialize when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
 } else {

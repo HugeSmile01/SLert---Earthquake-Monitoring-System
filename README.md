@@ -1,26 +1,30 @@
-# 🌏 Philippine Earthquake Alert System (EarthquakeSys)
+# 🌏 Southern Leyte Earthquake Alert System
 
-A comprehensive, real-time earthquake monitoring and alert system specifically designed for the Philippines. This web application provides live earthquake data, SMS alerts, interactive maps, community check-in features, and educational resources to help keep Filipinos safe.
+A comprehensive, real-time earthquake monitoring and alert system specifically designed for Southern Leyte, Philippines. This Progressive Web Application provides live earthquake data, email alerts with infographics, interactive maps, community check-in features, and educational resources to help keep the people of Southern Leyte safe.
 
 ![System Status](https://img.shields.io/badge/status-active-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
+![PWA Ready](https://img.shields.io/badge/PWA-ready-purple)
 
 ## 🚀 Features
 
 ### Core Features
-- **Real-time Earthquake Monitoring** - Live data from USGS API filtered for Philippines region
+- **Real-time Earthquake Monitoring** - Live data from USGS API filtered for Southern Leyte region
 - **Interactive Map Visualization** - Leaflet.js powered map showing earthquake locations and magnitudes
-- **SMS Alert System** - Automatic notifications for significant earthquakes (configurable threshold)
+- **Email Alert System** - Automatic email notifications with infographics for significant earthquakes
+- **Progressive Web App** - Install as a mobile app with offline capability
 - **Community Check-In** - Let friends and family know you're safe after an earthquake
 - **Educational Resources** - Comprehensive earthquake preparedness and safety guides
 - **Historical Data** - View and analyze past earthquake records
 - **Responsive Design** - Mobile-first design works perfectly on all devices
+- **Enhanced Security** - Input validation, rate limiting, and CSP headers
+- **Reliable Data Fetching** - Automatic retry logic for API failures
 
 ### Dashboard Statistics
 - Earthquakes in last 24 hours
 - Earthquakes in last 7 days
 - Strongest earthquake today
-- SMS alerts sent count
+- Email alerts sent count
 - System status indicators
 
 ## 🛠️ Technology Stack
@@ -29,7 +33,9 @@ A comprehensive, real-time earthquake monitoring and alert system specifically d
 - **Build Tool:** Vite
 - **Maps:** Leaflet.js with OpenStreetMap
 - **Data Source:** USGS Earthquake API
-- **SMS Service:** Ready for Twilio or Semaphore integration
+- **Email Service:** Ready for integration with email providers
+- **PWA Features:** Service Worker, Web App Manifest
+- **Security:** Input validation, rate limiting, CSP headers
 - **Backend (Future):** Firebase (Authentication, Firestore, Cloud Functions)
 
 ## 📋 Prerequisites
@@ -71,36 +77,45 @@ npm run preview
 
 The built files will be in the `dist/` directory, ready for deployment.
 
-## 📱 SMS Alert Configuration
+## 📱 Email Alert Configuration
 
-The system is ready for SMS integration with Twilio or Semaphore (Philippine SMS provider).
+The system is ready for email integration with various email service providers.
 
-### To Enable SMS Alerts:
+### To Enable Email Alerts:
 
-1. **Sign up for an SMS service:**
-   - **Twilio:** https://www.twilio.com/
-   - **Semaphore:** https://semaphore.co/ (Philippine provider)
+1. **Set up an email service provider:**
+   - **SendGrid:** https://sendgrid.com/
+   - **Mailgun:** https://www.mailgun.com/
+   - **Amazon SES:** https://aws.amazon.com/ses/
 
-2. **Update the alert service** in `src/alertService.ts`:
+2. **Update the email service** in `src/emailService.ts`:
    ```typescript
-   // Replace the simulateSMSAlert method with actual API calls
-   import twilio from 'twilio';
+   import sgMail from '@sendgrid/mail';
    
-   const client = twilio(accountSid, authToken);
+   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
    
-   await client.messages.create({
-     body: `EARTHQUAKE ALERT: M${earthquake.magnitude} detected ${earthquake.place}`,
-     to: phoneNumber,
-     from: twilioNumber
-   });
+   const msg = {
+     to: userEmail,
+     from: 'alerts@southernleyte-earthquake.ph',
+     subject: `Earthquake Alert: M${earthquake.magnitude}`,
+     text: `A magnitude ${earthquake.magnitude} earthquake was detected in ${earthquake.place}`,
+     html: generateEmailHTML(earthquake),
+     attachments: [{
+       content: infographicBase64,
+       filename: 'earthquake-alert.png',
+       type: 'image/png',
+       disposition: 'attachment'
+     }]
+   };
+   
+   await sgMail.send(msg);
    ```
 
 3. **Configure environment variables:**
    Create a `.env` file:
    ```
-   VITE_TWILIO_ACCOUNT_SID=your_account_sid
-   VITE_TWILIO_AUTH_TOKEN=your_auth_token
-   VITE_TWILIO_PHONE_NUMBER=your_twilio_number
+   VITE_EMAIL_API_KEY=your_api_key
+   VITE_EMAIL_FROM=alerts@your-domain.com
    ```
 
 ## 🔥 Firebase Integration (Optional)
@@ -152,11 +167,21 @@ getMagnitudeColor(magnitude: number): string {
 }
 ```
 
-### Update Map Center and Zoom
+### Update Map Center and Zoom for Southern Leyte
 Edit `src/mapService.ts`:
 ```typescript
-// Change initial map view
-this.map = L.map(containerId).setView([12.8797, 121.7740], 6);
+this.map = L.map(containerId).setView([10.3, 125.0], 10);
+```
+
+### Customize Earthquake Bounds
+Edit `src/earthquakeService.ts`:
+```typescript
+const SOUTHERN_LEYTE_BOUNDS = {
+  minLat: 9.8,
+  maxLat: 10.8,
+  minLng: 124.5,
+  maxLng: 125.5,
+};
 ```
 
 ### Customize Colors
@@ -170,15 +195,33 @@ colors: {
 }
 ```
 
-## 📱 Mobile App Development
+## 📱 Progressive Web App (PWA)
 
-The responsive web design works well on mobile browsers. To create native apps:
+The application is a fully functional PWA with:
+- **Offline Support:** Service worker caches essential resources
+- **Installable:** Add to home screen on mobile devices
+- **App-like Experience:** Standalone display mode
+- **Fast Loading:** Cached resources load instantly
 
-### Progressive Web App (PWA)
-Add a service worker and manifest.json for offline functionality and app-like experience.
+### Installing the PWA:
+1. Open the app in a mobile browser
+2. Tap the "Add to Home Screen" option
+3. The app will be installed like a native app
 
-### React Native Conversion
-The TypeScript codebase can be adapted for React Native to create native iOS/Android apps.
+## 🔒 Security Features
+
+- **Input Validation:** All user inputs are validated and sanitized
+- **Rate Limiting:** Prevents abuse of subscription features
+- **CSP Headers:** Content Security Policy prevents XSS attacks
+- **HTTPS Enforcement:** Redirects to secure connection
+- **Local Data Only:** Sensitive data stays on device
+
+## 🛡️ Reliability Features
+
+- **Automatic Retries:** Failed API calls retry with exponential backoff
+- **Data Caching:** Earthquake data cached for offline access
+- **Graceful Degradation:** App works even when API is unavailable
+- **Error Boundaries:** Errors don't crash the entire application
 
 ## 🧪 Testing
 
@@ -252,7 +295,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 For questions, suggestions, or support:
 - Create an issue on GitHub
-- Email: [Your contact email]
+- Focus Area: Southern Leyte, Philippines
 
 ## ⚠️ Disclaimer
 
@@ -260,4 +303,4 @@ This system is designed to complement official government alerts and should not 
 
 ---
 
-**Made with ❤️ for the safety of the Filipino people**
+**Made with ❤️ for the safety of the people of Southern Leyte**
