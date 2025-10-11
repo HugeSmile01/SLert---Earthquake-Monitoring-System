@@ -10,12 +10,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="SL Earthquake">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/png" sizes="192x192" href="/images/icon-192.png">
-    <link rel="apple-touch-icon" href="/images/icon-192.png">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="./images/icon-192.png">
+    <link rel="apple-touch-icon" href="./images/icon-192.png">
     <title>Southern Leyte Earthquake Alert System</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="/src/style.css">
+    <link rel="stylesheet" href="./src/style.css">
 </head>
 <body class="bg-gray-50">
     <!-- Alert Banner -->
@@ -349,7 +349,9 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
+                // Use relative path - Vite's base config (/EarthquakeSys/) handles GitHub Pages deployment
+                // The service worker will be registered at the correct path relative to the base URL
+                navigator.serviceWorker.register('./sw.js')
                     .then((registration) => {
                         console.log('ServiceWorker registered:', registration);
                     })
@@ -360,6 +362,6 @@
         }
     </script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="./src/main.ts"></script>
 </body>
 </html>

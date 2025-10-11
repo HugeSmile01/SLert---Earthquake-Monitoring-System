@@ -1,12 +1,12 @@
 const CACHE_NAME = 'sl-earthquake-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/src/style.css',
-  '/src/main.ts',
-  '/images/marker-icon.png',
-  '/images/marker-icon-2x.png',
-  '/images/marker-shadow.png',
+  './',
+  './index.html',
+  './src/style.css',
+  './src/main.ts',
+  './images/marker-icon.png',
+  './images/marker-icon-2x.png',
+  './images/marker-shadow.png',
 ];
 
 self.addEventListener('install', (event) => {
