@@ -1,7 +1,7 @@
 import './style.css';
 import { earthquakeService } from './earthquakeService';
 import { mapService } from './mapService';
-import { emailService } from './emailService';
+import { alertService } from './alertService';
 import type { Earthquake } from './types';
 
 let currentEarthquakes: Earthquake[] = [];
@@ -9,7 +9,7 @@ let currentEarthquakes: Earthquake[] = [];
 async function init(): Promise<void> {
   console.log('🌏 Initializing Southern Leyte Earthquake Alert System...');
   
-  emailService.init();
+  alertService.init();
   mapService.initMap('earthquake-map');
 
   setupEventListeners();
@@ -29,7 +29,7 @@ async function refreshData(): Promise<void> {
     updateDashboard(currentEarthquakes);
     updateEarthquakeList(currentEarthquakes);
     mapService.addEarthquakeMarkers(currentEarthquakes);
-    emailService.checkForAlerts(currentEarthquakes);
+    alertService.checkForAlerts(currentEarthquakes);
     
     updateSystemStatus('api', 'online');
     console.log(`✅ Loaded ${currentEarthquakes.length} earthquakes`);
@@ -50,8 +50,9 @@ function updateDashboard(earthquakes: Earthquake[]): void {
   document.getElementById('stat-strongest')!.textContent = 
     strongest ? `M${strongest.magnitude.toFixed(1)}` : 'N/A';
   
-  const emailCount = last24h.filter(eq => eq.magnitude >= 4.0).length * 10;
-  document.getElementById('stat-email')!.textContent = emailCount.toString();
+  // Update alerts sent count
+  const alertsCount = last24h.filter(eq => eq.magnitude >= 4.0).length;
+  document.getElementById('stat-alerts')!.textContent = alertsCount.toString();
 }
 
 function updateEarthquakeList(earthquakes: Earthquake[]): void {
@@ -104,7 +105,7 @@ function updateEarthquakeList(earthquakes: Earthquake[]): void {
   }).join('');
 }
 
-function updateSystemStatus(service: 'api' | 'email' | 'map', status: 'online' | 'offline'): void {
+function updateSystemStatus(service: 'api' | 'alerts' | 'map', status: 'online' | 'offline'): void {
   const indicator = document.getElementById(`status-${service}`);
   if (!indicator) return;
 
@@ -124,21 +125,18 @@ function setupEventListeners(): void {
     await refreshData();
   });
 
-  document.getElementById('email-form')?.addEventListener('submit', (e) => {
+  document.getElementById('alert-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
     
-    const emailInput = document.getElementById('email') as HTMLInputElement;
     const thresholdSelect = document.getElementById('magnitude-threshold') as HTMLSelectElement;
     const locationInput = document.getElementById('location') as HTMLInputElement;
 
-    if (emailInput.value && locationInput.value) {
-      emailService.subscribeEmail(
-        emailInput.value,
+    if (locationInput.value) {
+      alertService.subscribeAlerts(
         parseFloat(thresholdSelect.value),
         locationInput.value
       );
       
-      emailInput.value = '';
       locationInput.value = '';
     }
   });
@@ -147,7 +145,7 @@ function setupEventListeners(): void {
     handleCheckIn();
   });
 
-  updateSystemStatus('email', 'online');
+  updateSystemStatus('alerts', 'online');
   updateSystemStatus('map', 'online');
 }
 
@@ -165,8 +163,7 @@ function handleCheckIn(): void {
   localStorage.setItem('check_ins', JSON.stringify(checkIns.slice(0, 50)));
 
   updateCheckInList();
-  emailService.showAlert(`✅ Check-in recorded for ${location}. Stay safe!`, 'info');
-  setTimeout(() => emailService.hideAlert(), 3000);
+  alertService.showAlert(`✅ Check-in recorded for ${location}. Stay safe!`, 'info');
 }
 
 function updateCheckInList(): void {
@@ -192,7 +189,7 @@ function updateCheckInList(): void {
 }
 
 (window as any).closeAlert = () => {
-  emailService.hideAlert();
+  alertService.hideAlert();
 };
 
 if (document.readyState === 'loading') {

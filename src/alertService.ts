@@ -1,48 +1,39 @@
 import type { Earthquake } from './types';
+import Swal from 'sweetalert2';
 
 class AlertService {
-  private alertBanner: HTMLElement | null = null;
-  private alertMessage: HTMLElement | null = null;
-
   /**
    * Initialize the alert service
    */
   init(): void {
-    this.alertBanner = document.getElementById('alert-banner');
-    this.alertMessage = document.getElementById('alert-message');
+    // SweetAlert2 doesn't require initialization
   }
 
   /**
-   * Show an alert banner
+   * Show an alert using SweetAlert2
    */
   showAlert(message: string, type: 'info' | 'warning' | 'danger' = 'danger'): void {
-    if (!this.alertBanner || !this.alertMessage) return;
+    const iconMap = {
+      danger: 'error',
+      warning: 'warning',
+      info: 'success'
+    } as const;
 
-    this.alertMessage.textContent = message;
-    
-    // Set color based on type
-    this.alertBanner.classList.remove('bg-alert-red', 'bg-warning-yellow', 'bg-blue-600');
-    switch (type) {
-      case 'danger':
-        this.alertBanner.classList.add('bg-alert-red');
-        break;
-      case 'warning':
-        this.alertBanner.classList.add('bg-warning-yellow', 'text-gray-900');
-        break;
-      case 'info':
-        this.alertBanner.classList.add('bg-blue-600');
-        break;
-    }
-
-    this.alertBanner.classList.remove('hidden');
+    Swal.fire({
+      title: type === 'danger' ? 'Alert!' : type === 'warning' ? 'Warning!' : 'Success!',
+      text: message,
+      icon: iconMap[type],
+      confirmButtonColor: '#003366',
+      timer: type === 'info' ? 3000 : undefined,
+      timerProgressBar: type === 'info',
+    });
   }
 
   /**
-   * Hide the alert banner
+   * Hide the alert (SweetAlert2 closes automatically)
    */
   hideAlert(): void {
-    if (!this.alertBanner) return;
-    this.alertBanner.classList.add('hidden');
+    Swal.close();
   }
 
   /**
@@ -60,51 +51,58 @@ class AlertService {
         current.magnitude > prev.magnitude ? current : prev
       );
       
-      const message = `⚠️ Earthquake Alert: M${strongest.magnitude.toFixed(1)} detected ${strongest.place}`;
-      this.showAlert(message, 'danger');
+      const message = `Magnitude ${strongest.magnitude.toFixed(1)} earthquake detected ${strongest.place}`;
       
-      // Simulate SMS alert
-      this.simulateSMSAlert(strongest);
+      Swal.fire({
+        title: '⚠️ Earthquake Alert',
+        text: message,
+        icon: 'warning',
+        confirmButtonColor: '#003366',
+        confirmButtonText: 'Stay Safe',
+        timer: 10000,
+        timerProgressBar: true,
+      });
+      
+      // Log alert for Firebase integration
+      this.logAlert(strongest);
     }
   }
 
   /**
-   * Simulate SMS alert (in production, this would call Twilio/Semaphore API)
+   * Log alert to console (Firebase integration placeholder)
    */
-  private simulateSMSAlert(earthquake: Earthquake): void {
-    console.log('📱 SMS Alert Sent:');
+  private logAlert(earthquake: Earthquake): void {
+    console.log('🔥 Alert Logged (Firebase):');
     console.log(`Magnitude ${earthquake.magnitude.toFixed(1)} earthquake detected`);
     console.log(`Location: ${earthquake.place}`);
     console.log(`Time: ${new Date(earthquake.time).toLocaleString('en-PH')}`);
     console.log('---');
     
-    // In production, this would be:
-    // await twilioClient.messages.create({
-    //   body: `EARTHQUAKE ALERT: M${earthquake.magnitude} detected ${earthquake.place}. Stay safe!`,
-    //   to: subscribedPhoneNumbers,
-    //   from: twilioPhoneNumber
+    // TODO: In production, save to Firebase/Firestore
+    // await addDoc(collection(db, 'alerts'), {
+    //   magnitude: earthquake.magnitude,
+    //   place: earthquake.place,
+    //   time: earthquake.time,
+    //   timestamp: serverTimestamp()
     // });
   }
 
   /**
-   * Subscribe to SMS alerts (mock implementation)
+   * Subscribe to alerts using Firebase (mock implementation)
    */
-  subscribeSMS(phoneNumber: string, threshold: number, location: string): void {
-    console.log('SMS Alert Subscription:');
-    console.log(`Phone: ${phoneNumber}`);
+  subscribeAlerts(threshold: number, location: string): void {
+    console.log('Alert Subscription (Firebase):');
     console.log(`Threshold: M${threshold}+`);
     console.log(`Location: ${location}`);
     
     // In production, this would save to Firebase/Firestore
-    localStorage.setItem('sms_subscription', JSON.stringify({
-      phoneNumber,
+    localStorage.setItem('alert_subscription', JSON.stringify({
       threshold,
       location,
       subscribedAt: Date.now(),
     }));
 
-    this.showAlert('✅ Successfully subscribed to SMS alerts!', 'info');
-    setTimeout(() => this.hideAlert(), 5000);
+    this.showAlert('✅ Successfully subscribed to alerts!', 'info');
   }
 }
 
