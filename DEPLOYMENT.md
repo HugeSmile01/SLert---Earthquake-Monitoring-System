@@ -1,7 +1,7 @@
 # Deployment Guide
 
 ## Overview
-This guide covers deploying the Philippine Earthquake Alert System to various platforms.
+This guide covers deploying the Southern Leyte Earthquake Alert System to various platforms.
 
 ## Prerequisites
 - Node.js 18+ installed
@@ -142,13 +142,12 @@ firebase deploy --only hosting
 
 ## Environment Variables
 
-If using SMS or Firebase features, set these environment variables:
+If using Email or Firebase features, set these environment variables:
 
-### For Twilio SMS:
+### For Email Service (e.g., SendGrid):
 ```env
-VITE_TWILIO_ACCOUNT_SID=your_account_sid
-VITE_TWILIO_AUTH_TOKEN=your_auth_token
-VITE_TWILIO_PHONE_NUMBER=your_phone_number
+VITE_EMAIL_API_KEY=your_api_key
+VITE_EMAIL_FROM=alerts@your-domain.com
 ```
 
 ### For Firebase:
@@ -168,16 +167,18 @@ If you have custom API endpoints, update them in:
 - `src/earthquakeService.ts`
 - `src/alertService.ts`
 
-### 2. Configure SMS Service
-Update `src/alertService.ts` with your Twilio/Semaphore credentials.
+### 2. Configure Email Service
+Update `src/emailService.ts` with your email service provider credentials.
 
 ### 3. Test Features
 - [ ] Dashboard loads correctly
 - [ ] Map displays (check CORS for OpenStreetMap)
 - [ ] Earthquake data fetches from USGS
-- [ ] SMS subscription form works
+- [ ] Email subscription form works
 - [ ] Check-in feature works
 - [ ] Mobile responsiveness
+- [ ] PWA installation works
+- [ ] Service worker caching works
 
 ### 4. Performance Optimization
 ```bash
@@ -198,7 +199,7 @@ npx lighthouse http://your-domain.com --view
 ### Health Check Endpoint
 The system status shows:
 - PHIVOLCS API status
-- SMS Service status
+- Email Service status
 - Map Service status
 
 ## Troubleshooting
@@ -209,8 +210,8 @@ The system status shows:
 ### Issue: USGS API blocked
 **Solution:** The API should work without authentication. Check network connectivity and CORS.
 
-### Issue: SMS not sending
-**Solution:** Verify Twilio/Semaphore credentials and account balance.
+### Issue: Email not sending
+**Solution:** Verify email service provider credentials and API limits.
 
 ### Issue: Build fails
 **Solution:** 
