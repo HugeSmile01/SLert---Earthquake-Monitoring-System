@@ -1,10 +1,4 @@
 const CACHE_NAME = 'sl-earthquake-v1';
-// Get the base path from registration scope
-const getBasePath = () => {
-  // Will be set when service worker is registered
-  return self.registration ? new URL('./', self.registration.scope).pathname : './';
-};
-
 const urlsToCache = [
   './',
   './index.html',

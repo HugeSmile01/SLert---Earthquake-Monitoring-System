@@ -349,9 +349,8 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // Use relative path for service worker to work with GitHub Pages base path
-                const swPath = new URL('./sw.js', document.baseURI).pathname;
-                navigator.serviceWorker.register(swPath)
+                // Use relative path - Vite will handle base path correctly
+                navigator.serviceWorker.register('./sw.js')
                     .then((registration) => {
                         console.log('ServiceWorker registered:', registration);
                     })
