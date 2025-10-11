@@ -2,8 +2,6 @@ import L from 'leaflet';
 import type { Earthquake } from './types';
 import { earthquakeService } from './earthquakeService';
 
-// Fix Leaflet default icon issue with bundlers
-// Use local marker icons instead of CDN for security and reliability
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: '/images/marker-icon-2x.png',
   iconUrl: '/images/marker-icon.png',
@@ -14,25 +12,20 @@ class MapService {
   private map: L.Map | null = null;
   private markers: L.Marker[] = [];
 
-  /**
-   * Initialize the map
-   */
   initMap(containerId: string): void {
     if (this.map) {
       return;
     }
 
-    // Center on Philippines
-    this.map = L.map(containerId).setView([12.8797, 121.7740], 6);
+    this.map = L.map(containerId).setView([10.3, 125.0], 10);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',
       maxZoom: 18,
     }).addTo(this.map);
 
-    // Add Philippines boundary highlight
     L.rectangle(
-      [[4.5, 116.0], [21.0, 127.0]],
+      [[9.8, 124.5], [10.8, 125.5]],
       {
         color: '#003366',
         weight: 2,
@@ -41,17 +34,11 @@ class MapService {
     ).addTo(this.map);
   }
 
-  /**
-   * Clear all markers from the map
-   */
   clearMarkers(): void {
     this.markers.forEach(marker => marker.remove());
     this.markers = [];
   }
 
-  /**
-   * Add earthquake markers to the map
-   */
   addEarthquakeMarkers(earthquakes: Earthquake[]): void {
     if (!this.map) return;
 
@@ -102,9 +89,6 @@ class MapService {
     });
   }
 
-  /**
-   * Get the map instance
-   */
   getMap(): L.Map | null {
     return this.map;
   }

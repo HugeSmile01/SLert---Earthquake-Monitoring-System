@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Philippine Earthquake Alert System - Real-time monitoring and SMS alerts for earthquake safety">
-    <title>Philippine Earthquake Alert System</title>
+    <meta name="description" content="Southern Leyte Earthquake Alert System - Real-time monitoring and email alerts for earthquake safety">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https://*.openstreetmap.org; connect-src 'self' https://earthquake.usgs.gov; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+    <meta name="theme-color" content="#003366">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SL Earthquake">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/icon-192.png">
+    <link rel="apple-touch-icon" href="/images/icon-192.png">
+    <title>Southern Leyte Earthquake Alert System</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="/src/style.css">
 </head>
@@ -34,7 +43,7 @@
                     <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
                     </svg>
-                    <h1 class="text-2xl font-bold">EarthquakeSys PH</h1>
+                    <h1 class="text-2xl font-bold">Southern Leyte EarthquakeAlert</h1>
                 </div>
                 <div class="hidden md:flex gap-6">
                     <a href="#dashboard" class="hover:text-gray-300 transition">Dashboard</a>
@@ -114,8 +123,8 @@
                 <div class="bg-white rounded-lg shadow p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-gray-600 text-sm">SMS Alerts Sent</p>
-                            <p id="stat-sms" class="text-3xl font-bold text-phivolcs-blue">-</p>
+                            <p class="text-gray-600 text-sm">Email Alerts Sent</p>
+                            <p id="stat-email" class="text-3xl font-bold text-phivolcs-blue">-</p>
                         </div>
                         <div class="bg-yellow-100 p-3 rounded-full">
                             <svg class="w-8 h-8 text-warning-yellow" fill="currentColor" viewBox="0 0 20 20">
@@ -136,8 +145,8 @@
                         <span class="text-gray-700">PHIVOLCS API</span>
                     </div>
                     <div class="flex items-center gap-3">
-                        <div id="status-sms" class="w-3 h-3 rounded-full bg-safe-green"></div>
-                        <span class="text-gray-700">SMS Service</span>
+                        <div id="status-email" class="w-3 h-3 rounded-full bg-safe-green"></div>
+                        <span class="text-gray-700">Email Service</span>
                     </div>
                     <div class="flex items-center gap-3">
                         <div id="status-map" class="w-3 h-3 rounded-full bg-safe-green"></div>
@@ -196,15 +205,15 @@
             </div>
         </section>
 
-        <!-- SMS Alert Configuration -->
+        <!-- Email Alert Configuration -->
         <section class="mb-8">
             <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-xl font-bold text-phivolcs-blue mb-4">SMS Alert Settings</h2>
-                <p class="text-gray-600 mb-4">Receive instant SMS alerts for earthquakes in your area.</p>
-                <form id="sms-form" class="space-y-4">
+                <h2 class="text-xl font-bold text-phivolcs-blue mb-4">Email Alert Settings</h2>
+                <p class="text-gray-600 mb-4">Receive instant email alerts with infographics for earthquakes in your area.</p>
+                <form id="email-form" class="space-y-4">
                     <div>
-                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                        <input type="tel" id="phone" placeholder="+63 9XX XXX XXXX" class="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-phivolcs-blue focus:border-transparent">
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <input type="email" id="email" placeholder="your.email@example.com" required class="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-phivolcs-blue focus:border-transparent">
                     </div>
                     <div>
                         <label for="magnitude-threshold" class="block text-sm font-medium text-gray-700 mb-1">Alert Threshold (Magnitude)</label>
@@ -216,8 +225,8 @@
                         </select>
                     </div>
                     <div>
-                        <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Your Location</label>
-                        <input type="text" id="location" placeholder="e.g., Manila, Cebu, Davao" class="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-phivolcs-blue focus:border-transparent">
+                        <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Your Location in Southern Leyte</label>
+                        <input type="text" id="location" placeholder="e.g., Maasin City, Sogod, Hinunangan" required class="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-phivolcs-blue focus:border-transparent">
                     </div>
                     <button type="submit" class="bg-phivolcs-blue text-white px-6 py-2 rounded hover:bg-blue-800 transition">
                         Subscribe to Alerts
@@ -331,12 +340,25 @@
     <!-- Footer -->
     <footer class="bg-phivolcs-blue text-white py-6 mt-8">
         <div class="container mx-auto px-4 text-center">
-            <p class="mb-2">Philippine Earthquake Alert System</p>
+            <p class="mb-2">Southern Leyte Earthquake Alert System</p>
             <p class="text-sm text-gray-300">Data sources: PHIVOLCS, USGS | For emergencies, call 911</p>
             <p class="text-xs text-gray-400 mt-2">This system is designed to complement official government alerts.</p>
         </div>
     </footer>
 
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('ServiceWorker registered:', registration);
+                    })
+                    .catch((error) => {
+                        console.log('ServiceWorker registration failed:', error);
+                    });
+            });
+        }
+    </script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="module" src="/src/main.ts"></script>
 </body>

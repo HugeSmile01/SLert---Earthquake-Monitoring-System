@@ -1,29 +1,31 @@
 import type { Earthquake, EarthquakeResponse } from './types';
 
 const USGS_API_BASE = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary';
-const PHILIPPINES_BOUNDS = {
-  minLat: 4.5,
-  maxLat: 21.0,
-  minLng: 116.0,
-  maxLng: 127.0,
+const SOUTHERN_LEYTE_BOUNDS = {
+  minLat: 9.8,
+  maxLat: 10.8,
+  minLng: 124.5,
+  maxLng: 125.5,
 };
 
 class EarthquakeService {
   private cachedData: Earthquake[] = [];
   private lastFetch: number = 0;
-  private cacheDuration: number = 60000; // 1 minute
+  private cacheDuration: number = 60000;
+  private maxRetries: number = 3;
+  private retryDelay: number = 2000;
 
-  /**
-   * Fetch earthquakes from USGS API
-   */
   async fetchEarthquakes(timeframe: 'hour' | 'day' | 'week' | 'month' = 'week'): Promise<Earthquake[]> {
     const now = Date.now();
     
-    // Return cached data if still valid
     if (now - this.lastFetch < this.cacheDuration && this.cachedData.length > 0) {
       return this.cachedData;
     }
 
+    return this.fetchWithRetry(timeframe);
+  }
+
+  private async fetchWithRetry(timeframe: string, attempt: number = 1): Promise<Earthquake[]> {
     try {
       const url = `${USGS_API_BASE}/all_${timeframe}.geojson`;
       const response = await fetch(url);
@@ -34,15 +36,14 @@ class EarthquakeService {
       
       const data: EarthquakeResponse = await response.json();
       
-      // Filter for Philippines region
       const earthquakes = data.features
         .filter(feature => {
           const [lng, lat] = feature.geometry.coordinates;
           return (
-            lat >= PHILIPPINES_BOUNDS.minLat &&
-            lat <= PHILIPPINES_BOUNDS.maxLat &&
-            lng >= PHILIPPINES_BOUNDS.minLng &&
-            lng <= PHILIPPINES_BOUNDS.maxLng
+            lat >= SOUTHERN_LEYTE_BOUNDS.minLat &&
+            lat <= SOUTHERN_LEYTE_BOUNDS.maxLat &&
+            lng >= SOUTHERN_LEYTE_BOUNDS.minLng &&
+            lng <= SOUTHERN_LEYTE_BOUNDS.maxLng
           );
         })
         .map(feature => ({
@@ -60,27 +61,30 @@ class EarthquakeService {
         .sort((a, b) => b.time - a.time);
 
       this.cachedData = earthquakes;
-      this.lastFetch = now;
+      this.lastFetch = Date.now();
       
       return earthquakes;
     } catch (error) {
-      console.error('Error fetching earthquake data:', error);
-      // Return cached data if available, even if expired
+      console.error(`Error fetching earthquake data (attempt ${attempt}):`, error);
+      
+      if (attempt < this.maxRetries) {
+        await this.delay(this.retryDelay * attempt);
+        return this.fetchWithRetry(timeframe, attempt + 1);
+      }
+      
       return this.cachedData;
     }
   }
 
-  /**
-   * Get earthquakes within a specific time range
-   */
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   getEarthquakesByTimeRange(earthquakes: Earthquake[], hours: number): Earthquake[] {
     const cutoff = Date.now() - hours * 60 * 60 * 1000;
     return earthquakes.filter(eq => eq.time >= cutoff);
   }
 
-  /**
-   * Get the strongest earthquake from a list
-   */
   getStrongestEarthquake(earthquakes: Earthquake[]): Earthquake | null {
     if (earthquakes.length === 0) return null;
     return earthquakes.reduce((strongest, current) => 
@@ -88,26 +92,17 @@ class EarthquakeService {
     );
   }
 
-  /**
-   * Filter earthquakes by magnitude threshold
-   */
   filterByMagnitude(earthquakes: Earthquake[], minMagnitude: number): Earthquake[] {
     return earthquakes.filter(eq => eq.magnitude >= minMagnitude);
   }
 
-  /**
-   * Get magnitude color based on severity
-   */
   getMagnitudeColor(magnitude: number): string {
-    if (magnitude >= 7.0) return '#dc2626'; // red
-    if (magnitude >= 5.5) return '#f97316'; // orange
-    if (magnitude >= 4.0) return '#facc15'; // yellow
-    return '#16a34a'; // green
+    if (magnitude >= 7.0) return '#dc2626';
+    if (magnitude >= 5.5) return '#f97316';
+    if (magnitude >= 4.0) return '#facc15';
+    return '#16a34a';
   }
 
-  /**
-   * Get magnitude label
-   */
   getMagnitudeLabel(magnitude: number): string {
     if (magnitude >= 7.0) return 'Major';
     if (magnitude >= 5.5) return 'Strong';
@@ -115,9 +110,6 @@ class EarthquakeService {
     return 'Minor';
   }
 
-  /**
-   * Format earthquake time
-   */
   formatTime(timestamp: number): string {
     const date = new Date(timestamp);
     const now = new Date();
