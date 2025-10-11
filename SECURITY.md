@@ -34,9 +34,11 @@ All user inputs are validated and sanitized using the SecurityUtils class:
 
 #### Rate Limiting
 Subscription attempts are rate-limited to prevent abuse:
-- Maximum 5 attempts per minute per feature
+- Maximum 5 attempts per minute per feature (configurable in SecurityUtils)
 - Tracked using localStorage with timestamps
 - Automatic cleanup of old attempts
+- **Note:** For production, implement server-side rate limiting based on IP address
+- **Note:** Consider emergency scenarios - may need higher limits during actual earthquakes
 
 #### Content Security Policy
 CSP headers configured to restrict:
@@ -47,12 +49,13 @@ CSP headers configured to restrict:
 - No frame embedding allowed
 
 ### Future Security Enhancements
-1. Implement server-side rate limiting
+1. **Server-side rate limiting** - Move from localStorage to server-based rate limiting using IP addresses
 2. Add CAPTCHA for email subscriptions
 3. Setup Sentry for error monitoring
 4. Implement proper authentication with Firebase
 5. Add API key rotation mechanism
 6. Add email verification for subscriptions
+7. **Move email sending to backend** - Never expose API keys in client-side code
 
 ## Reporting Security Issues
 Please report security issues to the repository maintainers.

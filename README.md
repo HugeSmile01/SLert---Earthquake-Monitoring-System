@@ -81,42 +81,65 @@ The built files will be in the `dist/` directory, ready for deployment.
 
 The system is ready for email integration with various email service providers.
 
+**⚠️ IMPORTANT:** For production use, email sending MUST be implemented server-side. Never expose API keys in the client-side code.
+
 ### To Enable Email Alerts:
 
-1. **Set up an email service provider:**
+1. **Set up a backend API server** (Required for production):
+   - Create a Node.js/Express backend or serverless function
+   - Store API keys securely on the server
+   - Implement email sending endpoints
+
+2. **Choose an email service provider:**
    - **SendGrid:** https://sendgrid.com/
    - **Mailgun:** https://www.mailgun.com/
    - **Amazon SES:** https://aws.amazon.com/ses/
 
-2. **Update the email service** in `src/emailService.ts`:
-   ```typescript
-   import sgMail from '@sendgrid/mail';
+3. **Example Backend Implementation** (Node.js/Express):
+   ```javascript
+   // server.js
+   const express = require('express');
+   const sgMail = require('@sendgrid/mail');
    
-   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+   sgMail.setApiKey(process.env.SENDGRID_API_KEY); // Server-side only!
    
-   const msg = {
-     to: userEmail,
-     from: 'alerts@southernleyte-earthquake.ph',
-     subject: `Earthquake Alert: M${earthquake.magnitude}`,
-     text: `A magnitude ${earthquake.magnitude} earthquake was detected in ${earthquake.place}`,
-     html: generateEmailHTML(earthquake),
-     attachments: [{
-       content: infographicBase64,
-       filename: 'earthquake-alert.png',
-       type: 'image/png',
-       disposition: 'attachment'
-     }]
-   };
-   
-   await sgMail.send(msg);
+   app.post('/api/subscribe', async (req, res) => {
+     const { email, threshold, location } = req.body;
+     
+     // Validate inputs server-side
+     // Store in database
+     // Send confirmation email
+     
+     const msg = {
+       to: email,
+       from: 'alerts@southernleyte-earthquake.ph',
+       subject: 'Earthquake Alert Subscription Confirmed',
+       html: `<p>You're subscribed to alerts for ${location}</p>`
+     };
+     
+     await sgMail.send(msg);
+     res.json({ success: true });
+   });
    ```
 
-3. **Configure environment variables:**
-   Create a `.env` file:
+4. **Update the frontend** to call your backend API:
+   ```typescript
+   // In emailService.ts, replace the subscribeEmail method:
+   const response = await fetch('/api/subscribe', {
+     method: 'POST',
+     headers: { 'Content-Type': 'application/json' },
+     body: JSON.stringify({ email, threshold, location })
+   });
    ```
-   VITE_EMAIL_API_KEY=your_api_key
-   VITE_EMAIL_FROM=alerts@your-domain.com
+
+5. **Environment variables (server-side only):**
+   ```env
+   SENDGRID_API_KEY=your_api_key
+   EMAIL_FROM=alerts@your-domain.com
+   DATABASE_URL=your_database_url
    ```
+
+**Current Implementation:** The frontend currently stores subscriptions locally for demonstration. For production, implement a proper backend.
 
 ## 🔥 Firebase Integration (Optional)
 

@@ -142,13 +142,37 @@ firebase deploy --only hosting
 
 ## Environment Variables
 
-If using Email or Firebase features, set these environment variables:
+**IMPORTANT:** The email service should be implemented server-side. Never store API keys in client-side environment variables.
 
-### For Email Service (e.g., SendGrid):
-```env
-VITE_EMAIL_API_KEY=your_api_key
-VITE_EMAIL_FROM=alerts@your-domain.com
+### For Email Service (Backend Implementation Required):
+
+**Backend API** (Node.js/Express example):
+```javascript
+// server.js
+const express = require('express');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY); // Stored securely on server
+
+app.post('/api/subscribe-alert', async (req, res) => {
+  const { email, threshold, location } = req.body;
+  // Validate inputs
+  // Store subscription in database
+  // Send confirmation email
+});
 ```
+
+**Environment variables (server-side only):**
+```env
+SENDGRID_API_KEY=your_api_key
+EMAIL_FROM=alerts@your-domain.com
+DATABASE_URL=your_database_url
+```
+
+**Important Notes:**
+- ❌ DO NOT use `VITE_` prefixed variables for API keys - they will be exposed in the client bundle
+- ✅ Implement a backend API to handle email sending securely
+- ✅ Store API keys only on the server
+- ✅ Use proper authentication for your API endpoints
 
 ### For Firebase:
 ```env
