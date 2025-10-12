@@ -168,7 +168,10 @@ class SidebarService {
     const password = passwordInput.value;
 
     try {
-      await Swal.fire({
+      // Show loading and start login concurrently
+      const loginPromise = userAuthService.login(email, password);
+      
+      Swal.fire({
         title: 'Logging in...',
         allowOutsideClick: false,
         didOpen: () => {
@@ -176,7 +179,7 @@ class SidebarService {
         }
       });
 
-      await userAuthService.login(email, password);
+      await loginPromise;
 
       await Swal.fire({
         icon: 'success',
@@ -229,7 +232,10 @@ class SidebarService {
     }
 
     try {
-      await Swal.fire({
+      // Show loading and start signup concurrently
+      const signupPromise = userAuthService.signup(email, password, name);
+      
+      Swal.fire({
         title: 'Creating account...',
         allowOutsideClick: false,
         didOpen: () => {
@@ -237,7 +243,7 @@ class SidebarService {
         }
       });
 
-      await userAuthService.signup(email, password, name);
+      await signupPromise;
 
       await Swal.fire({
         icon: 'success',
