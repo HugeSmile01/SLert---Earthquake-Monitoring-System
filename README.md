@@ -53,6 +53,27 @@ A comprehensive, real-time earthquake monitoring and alert system specifically d
 - Alerts triggered count
 - System status indicators
 
+### Community Features
+- **Community News** - Share updates and information with the community (limited to 1-2 posts per day)
+- **Heart/Like System** - Show support for community posts with heart reactions
+- **Donation Feature** - Support system maintenance and affected communities
+- **User Reports** - Submit earthquake experience reports with intensity ratings
+- **Upvote/Downvote System** - Community verification of earthquake reports
+- **Anonymous Comments** - Discussion threads for each earthquake event
+- **Web Share API** - Share earthquake data to social media platforms
+
+### Performance & Monitoring
+- **Error Tracking** - Sentry.io integration for JavaScript error monitoring
+- **Performance Monitoring** - Web Vitals API tracking (LCP, FID, CLS)
+- **Real-time Metrics** - Monitor Core Web Vitals and API performance
+
+### Admin Features
+- **Admin Portal** - Professional management interface (restricted to admin@johnrish.website)
+- **Magnitude Editing** - Update earthquake magnitudes with "edited by admin" labels
+- **Content Moderation** - Delete inappropriate news posts, reports, and comments
+- **Activity Dashboard** - Monitor community activity and system statistics
+- **Edit History** - Track all administrative changes with timestamps and reasons
+
 ## 🛠️ Technology Stack
 
 - **Frontend:** TypeScript, HTML5, Tailwind CSS
@@ -66,6 +87,9 @@ A comprehensive, real-time earthquake monitoring and alert system specifically d
 - **PWA Features:** Service Worker, Web App Manifest
 - **Security:** Input validation, rate limiting, CSP headers
 - **Backend:** Firebase (Authentication, Firestore, Cloud Functions)
+- **Error Tracking:** Sentry.io (optional)
+- **Performance:** Web Vitals API
+- **Sharing:** Web Share API
 
 ## 📋 Prerequisites
 
@@ -148,9 +172,158 @@ The system uses Firebase for real-time data storage and notifications. To enable
      - threshold: number
      - location: string
      - userId: string (optional)
+   
+   /communityNews
+     - userId: string
+     - userName: string
+     - content: string
+     - timestamp: number
+     - hearts: number
+     - heartedBy: array of user IDs
+   
+   /earthquakeReports
+     - earthquakeId: string
+     - userId: string
+     - userName: string
+     - experience: string
+     - intensity: number (1-10)
+     - timestamp: number
+     - upvotes: number
+     - downvotes: number
+     - votedBy: object {userId: 'up' | 'down'}
+   
+   /earthquakeComments
+     - earthquakeId: string
+     - userId: string
+     - userName: string
+     - content: string
+     - timestamp: number
+   
+   /earthquakeEdits
+     - earthquakeId: string
+     - editedMagnitude: number
+     - originalMagnitude: number (optional)
+     - editedBy: string (admin email)
+     - editedAt: number
+     - reason: string
+     - editedByAdmin: boolean
+   ```
+
+5. **Firebase Security Rules:**
+   Configure Firestore security rules to protect data:
+   ```javascript
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       // Allow read access to all documents
+       match /{document=**} {
+         allow read: if true;
+       }
+       
+       // Community News - authenticated users only
+       match /communityNews/{newsId} {
+         allow create: if request.auth != null;
+         allow update: if request.auth != null && 
+                       (request.resource.data.hearts == resource.data.hearts + 1 ||
+                        request.resource.data.hearts == resource.data.hearts - 1);
+       }
+       
+       // Earthquake Reports - authenticated users only
+       match /earthquakeReports/{reportId} {
+         allow create: if request.auth != null;
+         allow update: if request.auth != null;
+       }
+       
+       // Comments - authenticated users only
+       match /earthquakeComments/{commentId} {
+         allow create: if request.auth != null;
+         allow delete: if request.auth != null && 
+                       resource.data.userId == request.auth.uid;
+       }
+       
+       // Earthquake Edits - admin only
+       match /earthquakeEdits/{editId} {
+         allow write: if request.auth != null && 
+                      request.auth.token.email == 'admin@johnrish.website';
+       }
+     }
+   }
    ```
 
 **Current Implementation:** The system stores data locally for demonstration. For production, implement proper Firebase integration.
+
+## 🎯 Community Features Guide
+
+### Community News
+- Users can post 1-2 news updates per day
+- Posts must be between 10-500 characters
+- Users can "heart" posts to show support
+- Anonymous authentication via Firebase
+
+### Earthquake Reports
+- Share your experience of an earthquake
+- Rate intensity from 1-10
+- Community can upvote/downvote for verification
+- Helps build community-driven data
+
+### Comments & Discussion
+- Post anonymous comments on earthquake events
+- Create discussion threads
+- Delete your own comments
+- Moderated by admin
+
+### Donations
+- Support system maintenance
+- Help affected communities
+- Contact admin for donation details
+
+### Web Share API
+- Share earthquake data to social media
+- Generate shareable links
+- Fallback to clipboard copy on unsupported browsers
+
+## 🔐 Admin Portal
+
+The admin portal is restricted to `admin@johnrish.website` only.
+
+### Access Admin Portal
+1. Navigate to `/admin.html`
+2. Login with admin credentials
+3. Access requires Firebase Authentication
+
+### Admin Features
+- **View Statistics:** Total news posts, reports, and comments
+- **Edit Earthquake Magnitudes:** Update inaccurate API data with transparency labels
+- **Moderate Content:** Delete inappropriate posts, reports, or comments
+- **View Recent Activity:** Monitor all community interactions
+- **Edit History:** Track all magnitude changes with reasons
+
+### Setting Up Admin Account
+1. In Firebase Console, go to Authentication
+2. Add user with email: `admin@johnrish.website`
+3. Set password
+4. Admin will auto-detect email on login
+
+## 📊 Error Tracking & Performance
+
+### Sentry Integration (Optional)
+1. Create account at [Sentry.io](https://sentry.io)
+2. Get your DSN key
+3. Add to `.env`:
+   ```env
+   VITE_SENTRY_DSN=your_sentry_dsn
+   ```
+4. Update Sentry script in `index.html` and `admin.html`
+5. Errors will be automatically tracked
+
+### Performance Monitoring
+The system automatically tracks:
+- **LCP (Largest Contentful Paint):** Page load performance
+- **FID (First Input Delay):** Interactivity
+- **CLS (Cumulative Layout Shift):** Visual stability
+- **API Response Times:** Monitor earthquake data fetching
+
+View metrics in browser console or implement custom dashboard.
 
 ## 📊 API Data Sources
 
