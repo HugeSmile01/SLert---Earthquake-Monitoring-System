@@ -12,6 +12,8 @@ import { errorTrackingService } from './errorTrackingService';
 import { performanceService } from './performanceService';
 import { communityService } from './communityService';
 import { adminService } from './adminService';
+import { userAuthService } from './userAuthService';
+import { sidebarService } from './sidebarService';
 import type { Earthquake } from './types';
 
 let currentEarthquakes: Earthquake[] = [];
@@ -29,6 +31,8 @@ async function init(): Promise<void> {
   alertService.init();
   themeService.init();
   adminService.init();
+  userAuthService.init();
+  sidebarService.init();
   await indexedDBService.init();
   await notificationService.init();
   await communityService.init();
@@ -321,6 +325,11 @@ function setupEventListeners(): void {
   
   mobileMenuBtn?.addEventListener('click', () => {
     mobileMenu?.classList.toggle('hidden');
+  });
+
+  // Mobile sidebar button
+  document.getElementById('open-sidebar-btn-mobile')?.addEventListener('click', () => {
+    sidebarService.openSidebar();
   });
 
   document.getElementById('refresh-btn')?.addEventListener('click', async () => {

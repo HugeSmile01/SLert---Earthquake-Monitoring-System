@@ -42,6 +42,11 @@
                     <button id="theme-toggle" class="text-2xl hover:scale-110 transition-transform" title="Toggle dark mode">
                         <span id="theme-icon">🌙</span>
                     </button>
+                    <button id="open-sidebar-btn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded transition">
+                        <svg class="w-5 h-5 inline" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
                 </div>
                 <button id="mobile-menu-btn" class="md:hidden">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -66,8 +71,139 @@
             <button id="theme-toggle-mobile" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded text-left">
                 <span id="theme-icon-mobile">🌙</span> Toggle Theme
             </button>
+            <button id="open-sidebar-btn-mobile" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded text-left">
+                👤 Account
+            </button>
         </div>
     </div>
+
+    <!-- Sidebar Overlay -->
+    <div id="sidebar-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+
+    <!-- User Sidebar -->
+    <aside id="user-sidebar" class="fixed top-0 right-0 h-full w-80 bg-white dark:bg-gray-800 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 overflow-y-auto">
+        <div class="p-6">
+            <!-- Close Button -->
+            <button id="close-sidebar-btn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+
+            <!-- Login Section (shown when not logged in) -->
+            <section id="sidebar-login-section" class="mt-8">
+                <h2 class="text-2xl font-bold text-phivolcs-blue dark:text-blue-400 mb-4">Login</h2>
+                <form id="user-login-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Email
+                        </label>
+                        <input type="email" id="user-login-email" required
+                               class="w-full border dark:border-gray-600 rounded px-4 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-phivolcs-blue focus:border-transparent"
+                               placeholder="your@email.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Password
+                        </label>
+                        <input type="password" id="user-login-password" required
+                               class="w-full border dark:border-gray-600 rounded px-4 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-phivolcs-blue focus:border-transparent">
+                    </div>
+                    <button type="submit" class="w-full bg-phivolcs-blue text-white px-6 py-3 rounded hover:bg-blue-800 transition">
+                        Login
+                    </button>
+                </form>
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        Don't have an account? 
+                        <button id="show-signup-btn" class="text-phivolcs-blue dark:text-blue-400 hover:underline">
+                            Sign up
+                        </button>
+                    </p>
+                </div>
+            </section>
+
+            <!-- Signup Section (shown when user clicks signup) -->
+            <section id="sidebar-signup-section" class="mt-8 hidden">
+                <h2 class="text-2xl font-bold text-phivolcs-blue dark:text-blue-400 mb-4">Sign Up</h2>
+                <form id="user-signup-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Name
+                        </label>
+                        <input type="text" id="user-signup-name" required
+                               class="w-full border dark:border-gray-600 rounded px-4 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-phivolcs-blue focus:border-transparent"
+                               placeholder="Your Name">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Email
+                        </label>
+                        <input type="email" id="user-signup-email" required
+                               class="w-full border dark:border-gray-600 rounded px-4 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-phivolcs-blue focus:border-transparent"
+                               placeholder="your@email.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Password
+                        </label>
+                        <input type="password" id="user-signup-password" required minlength="6"
+                               class="w-full border dark:border-gray-600 rounded px-4 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-phivolcs-blue focus:border-transparent"
+                               placeholder="At least 6 characters">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Confirm Password
+                        </label>
+                        <input type="password" id="user-signup-confirm-password" required minlength="6"
+                               class="w-full border dark:border-gray-600 rounded px-4 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-phivolcs-blue focus:border-transparent">
+                    </div>
+                    <button type="submit" class="w-full bg-phivolcs-blue text-white px-6 py-3 rounded hover:bg-blue-800 transition">
+                        Create Account
+                    </button>
+                </form>
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        Already have an account? 
+                        <button id="show-login-btn" class="text-phivolcs-blue dark:text-blue-400 hover:underline">
+                            Login
+                        </button>
+                    </p>
+                </div>
+            </section>
+
+            <!-- User Section (shown when logged in) -->
+            <section id="sidebar-user-section" class="mt-8 hidden">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-16 h-16 rounded-full bg-phivolcs-blue dark:bg-blue-600 flex items-center justify-center text-white text-2xl">
+                        <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200" id="user-display-name">User</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Community Member</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3 mb-6">
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Account Benefits</p>
+                        <ul class="mt-2 text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                            <li>✓ Post community news</li>
+                            <li>✓ Submit earthquake reports</li>
+                            <li>✓ Comment on posts</li>
+                            <li>✓ Personalized alerts</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <button id="user-logout-btn" class="w-full bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded transition">
+                    Logout
+                </button>
+            </section>
+        </div>
+    </aside>
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-6">
