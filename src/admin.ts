@@ -130,7 +130,7 @@ if (magnitudeForm) {
       });
       
       // Reset form
-      magnitudeForm.reset();
+      (magnitudeForm as HTMLFormElement).reset();
       
       // Reload edit history
       await loadEarthquakeEdits();

@@ -113,13 +113,14 @@ function updateEarthquakeList(earthquakes: Earthquake[]): void {
     const color = earthquakeService.getMagnitudeColor(earthquake.magnitude);
     const label = earthquakeService.getMagnitudeLabel(earthquake.magnitude);
     const time = earthquakeService.formatTime(earthquake.time);
+    const editedLabel = earthquake.editedByAdmin ? 
+      '<span class="ml-2 px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 text-xs rounded">✏️ Edited by Admin</span>' : '';
 
     return `
-      <div class="border dark:border-gray-600 rounded-lg p-4 hover:shadow-md transition cursor-pointer bg-white dark:bg-gray-700" 
-           onclick="window.open('${earthquake.url}', '_blank')">
+      <div class="border dark:border-gray-600 rounded-lg p-4 hover:shadow-md transition bg-white dark:bg-gray-700">
         <div class="flex items-start justify-between">
-          <div class="flex-1">
-            <div class="flex items-center gap-3 mb-2">
+          <div class="flex-1" onclick="window.open('${earthquake.url}', '_blank')" style="cursor: pointer;">
+            <div class="flex items-center gap-3 mb-2 flex-wrap">
               <span class="text-2xl font-bold" style="color: ${color};">
                 M${earthquake.magnitude.toFixed(1)}
               </span>
@@ -127,6 +128,7 @@ function updateEarthquakeList(earthquakes: Earthquake[]): void {
                     style="background-color: ${color}; color: white;">
                 ${label}
               </span>
+              ${editedLabel}
             </div>
             <p class="text-gray-800 dark:text-gray-200 font-medium mb-1">${earthquake.place}</p>
             <div class="flex flex-wrap gap-3 text-sm text-gray-600 dark:text-gray-400">
@@ -135,9 +137,22 @@ function updateEarthquakeList(earthquakes: Earthquake[]): void {
               ${earthquake.felt ? `<span>👥 ${earthquake.felt} felt reports</span>` : ''}
             </div>
           </div>
-          <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-          </svg>
+          <div class="flex flex-col gap-2 ml-2">
+            <button onclick="shareEarthquake('${earthquake.id}'); event.stopPropagation();" 
+                    class="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition" 
+                    title="Share earthquake">
+              <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+              </svg>
+            </button>
+            <button onclick="window.open('${earthquake.url}', '_blank'); event.stopPropagation();" 
+                    class="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition" 
+                    title="View details">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     `;
@@ -378,9 +393,15 @@ function setupEventListeners(): void {
   document.getElementById('sort-depth')?.addEventListener('click', () => sortBy('depth'));
   document.getElementById('sort-place')?.addEventListener('click', () => sortBy('place'));
 
+  // Community News
+  document.getElementById('community-news-form')?.addEventListener('submit', handleCommunityNewsSubmit);
+  document.getElementById('news-content')?.addEventListener('input', updateCharCount);
+  document.getElementById('donate-btn')?.addEventListener('click', handleDonation);
+
   updateSystemStatus('alerts', 'online');
   updateSystemStatus('map', 'online');
   updateThemeIcon();
+  updateCommunityNewsUI();
 }
 
 function updateThemeIcon(): void {
@@ -435,6 +456,141 @@ function updateCheckInList(): void {
     </div>
   `).join('');
 }
+
+// Community News Handlers
+function updateCharCount(): void {
+  const textarea = document.getElementById('news-content') as HTMLTextAreaElement;
+  const charCount = document.getElementById('news-char-count');
+  
+  if (textarea && charCount) {
+    charCount.textContent = `${textarea.value.length}/500`;
+  }
+}
+
+async function handleCommunityNewsSubmit(e: Event): Promise<void> {
+  e.preventDefault();
+  
+  const textarea = document.getElementById('news-content') as HTMLTextAreaElement;
+  const content = textarea.value.trim();
+  
+  if (content.length < 10) {
+    alertService.showAlert('Post must be at least 10 characters long', 'warning');
+    return;
+  }
+  
+  if (!communityService.canPostToday()) {
+    alertService.showAlert('Daily post limit reached (2 posts per day)', 'warning');
+    return;
+  }
+  
+  try {
+    await communityService.postNews(content);
+    textarea.value = '';
+    updateCharCount();
+    alertService.showAlert('News posted successfully!', 'info');
+    await updateCommunityNewsUI();
+  } catch (error) {
+    console.error('Error posting news:', error);
+    errorTrackingService.captureException(error as Error, { context: 'postNews' });
+    alertService.showAlert((error as Error).message || 'Failed to post news', 'danger');
+  }
+}
+
+async function updateCommunityNewsUI(): Promise<void> {
+  try {
+    // Update remaining posts
+    const remainingEl = document.getElementById('posts-remaining');
+    if (remainingEl) {
+      const remaining = communityService.getRemainingPosts();
+      remainingEl.textContent = `${remaining} post${remaining !== 1 ? 's' : ''} remaining today`;
+    }
+    
+    // Load and display news
+    const newsList = await communityService.getNews(20);
+    const container = document.getElementById('community-news-list');
+    
+    if (!container) return;
+    
+    if (newsList.length === 0) {
+      container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-4">No news yet. Be the first to post!</p>';
+      return;
+    }
+    
+    container.innerHTML = newsList.map(news => {
+      const date = new Date(news.timestamp).toLocaleString('en-PH');
+      const hasHearted = news.heartedBy?.includes(communityService.getCurrentUserId() || '') || false;
+      
+      return `
+        <div class="border dark:border-gray-700 rounded-lg p-4">
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <span class="font-semibold text-gray-700 dark:text-gray-300">${news.userName}</span>
+              <span class="text-sm text-gray-500 ml-2">${date}</span>
+            </div>
+            <button onclick="toggleHeart('${news.id}')" 
+                    class="flex items-center gap-1 px-3 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition ${hasHearted ? 'text-red-500' : 'text-gray-500'}">
+              ${hasHearted ? '❤️' : '🤍'} ${news.hearts || 0}
+            </button>
+          </div>
+          <p class="text-gray-800 dark:text-gray-200">${escapeHtml(news.content)}</p>
+        </div>
+      `;
+    }).join('');
+  } catch (error) {
+    console.error('Error updating community news UI:', error);
+  }
+}
+
+function escapeHtml(text: string): string {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+async function handleDonation(): Promise<void> {
+  const result = await import('sweetalert2').then(m => m.default.fire({
+    title: '💖 Support the Community',
+    html: `
+      <p class="mb-4">Your donations help maintain this earthquake alert system and support affected communities.</p>
+      <div class="space-y-2 text-left">
+        <p><strong>Development & Maintenance:</strong> Server costs, API fees, development time</p>
+        <p><strong>Community Support:</strong> Helping those affected by earthquakes</p>
+      </div>
+      <p class="mt-4 text-sm text-gray-600">Contact: admin@johnrish.website for donation details</p>
+    `,
+    icon: 'info',
+    showCancelButton: true,
+    confirmButtonText: 'Contact Admin',
+    cancelButtonText: 'Close'
+  }));
+  
+  if (result.isConfirmed) {
+    window.location.href = 'mailto:admin@johnrish.website?subject=Donation%20Inquiry';
+  }
+}
+
+(window as any).toggleHeart = async (newsId: string) => {
+  try {
+    await communityService.toggleHeart(newsId);
+    await updateCommunityNewsUI();
+  } catch (error) {
+    console.error('Error toggling heart:', error);
+    errorTrackingService.captureException(error as Error, { context: 'toggleHeart' });
+    alertService.showAlert('Failed to update heart', 'danger');
+  }
+};
+
+// Share earthquake data
+(window as any).shareEarthquake = async (earthquakeId: string) => {
+  const earthquake = currentEarthquakes.find(eq => eq.id === earthquakeId);
+  if (earthquake) {
+    try {
+      await shareService.shareEarthquake(earthquake);
+    } catch (error) {
+      console.error('Error sharing earthquake:', error);
+    }
+  }
+};
 
 (window as any).closeAlert = () => {
   alertService.hideAlert();
