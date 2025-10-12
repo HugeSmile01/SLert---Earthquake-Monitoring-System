@@ -17,7 +17,7 @@ class EarthquakeService {
 
   async fetchEarthquakes(timeframe: 'hour' | 'day' | 'week' | 'month' = 'week'): Promise<Earthquake[]> {
     const now = Date.now();
-    
+
     if (now - this.lastFetch < this.cacheDuration && this.cachedData.length > 0) {
       return this.cachedData;
     }
@@ -29,13 +29,13 @@ class EarthquakeService {
     try {
       const url = `${USGS_API_BASE}/all_${timeframe}.geojson`;
       const response = await fetch(url);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data: EarthquakeResponse = await response.json();
-      
+
       const earthquakes = data.features
         .filter(feature => {
           const [lng, lat] = feature.geometry.coordinates;
@@ -62,16 +62,16 @@ class EarthquakeService {
 
       this.cachedData = earthquakes;
       this.lastFetch = Date.now();
-      
+
       return earthquakes;
     } catch (error) {
       console.error(`Error fetching earthquake data (attempt ${attempt}):`, error);
-      
+
       if (attempt < this.maxRetries) {
         await this.delay(this.retryDelay * attempt);
         return this.fetchWithRetry(timeframe, attempt + 1);
       }
-      
+
       return this.cachedData;
     }
   }
@@ -87,8 +87,8 @@ class EarthquakeService {
 
   getStrongestEarthquake(earthquakes: Earthquake[]): Earthquake | null {
     if (earthquakes.length === 0) return null;
-    return earthquakes.reduce((strongest, current) => 
-      current.magnitude > strongest.magnitude ? current : strongest
+    return earthquakes.reduce((strongest, current) =>
+      current.magnitude > strongest.magnitude ? current : strongest,
     );
   }
 

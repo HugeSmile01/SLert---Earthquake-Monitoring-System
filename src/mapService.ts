@@ -31,7 +31,7 @@ class MapService {
         color: '#003366',
         weight: 2,
         fillOpacity: 0.05,
-      }
+      },
     ).addTo(this.map);
   }
 

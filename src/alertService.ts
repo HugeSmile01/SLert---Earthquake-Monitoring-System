@@ -16,7 +16,7 @@ class AlertService {
     const iconMap = {
       danger: 'error',
       warning: 'warning',
-      info: 'success'
+      info: 'success',
     } as const;
 
     Swal.fire({
@@ -43,16 +43,16 @@ class AlertService {
     // Check for recent significant earthquakes (last 5 minutes)
     const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
     const recentSignificant = earthquakes.filter(
-      eq => eq.time >= fiveMinutesAgo && eq.magnitude >= 5.0
+      eq => eq.time >= fiveMinutesAgo && eq.magnitude >= 5.0,
     );
 
     if (recentSignificant.length > 0) {
-      const strongest = recentSignificant.reduce((prev, current) => 
-        current.magnitude > prev.magnitude ? current : prev
+      const strongest = recentSignificant.reduce((prev, current) =>
+        current.magnitude > prev.magnitude ? current : prev,
       );
-      
+
       const message = `Magnitude ${strongest.magnitude.toFixed(1)} earthquake detected ${strongest.place}`;
-      
+
       Swal.fire({
         title: '⚠️ Earthquake Alert',
         text: message,
@@ -62,7 +62,7 @@ class AlertService {
         timer: 10000,
         timerProgressBar: true,
       });
-      
+
       // Log alert for Firebase integration
       this.logAlert(strongest);
     }
@@ -77,7 +77,7 @@ class AlertService {
     console.log(`Location: ${earthquake.place}`);
     console.log(`Time: ${new Date(earthquake.time).toLocaleString('en-PH')}`);
     console.log('---');
-    
+
     // TODO: In production, save to Firebase/Firestore
     // await addDoc(collection(db, 'alerts'), {
     //   magnitude: earthquake.magnitude,
@@ -94,7 +94,7 @@ class AlertService {
     console.log('Alert Subscription (Firebase):');
     console.log(`Threshold: M${threshold}+`);
     console.log(`Location: ${location}`);
-    
+
     // In production, this would save to Firebase/Firestore
     localStorage.setItem('alert_subscription', JSON.stringify({
       threshold,

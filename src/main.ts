@@ -8,7 +8,7 @@ let currentEarthquakes: Earthquake[] = [];
 
 async function init(): Promise<void> {
   console.log('🌏 Initializing Southern Leyte Earthquake Alert System...');
-  
+
   alertService.init();
   mapService.initMap('earthquake-map');
 
@@ -25,12 +25,12 @@ async function refreshData(): Promise<void> {
   try {
     console.log('🔄 Fetching earthquake data...');
     currentEarthquakes = await earthquakeService.fetchEarthquakes('week');
-    
+
     updateDashboard(currentEarthquakes);
     updateEarthquakeList(currentEarthquakes);
     mapService.addEarthquakeMarkers(currentEarthquakes);
     alertService.checkForAlerts(currentEarthquakes);
-    
+
     updateSystemStatus('api', 'online');
     console.log(`✅ Loaded ${currentEarthquakes.length} earthquakes`);
   } catch (error) {
@@ -47,9 +47,9 @@ function updateDashboard(earthquakes: Earthquake[]): void {
 
   document.getElementById('stat-24h')!.textContent = last24h.length.toString();
   document.getElementById('stat-7d')!.textContent = last7d.length.toString();
-  document.getElementById('stat-strongest')!.textContent = 
+  document.getElementById('stat-strongest')!.textContent =
     strongest ? `M${strongest.magnitude.toFixed(1)}` : 'N/A';
-  
+
   // Update alerts sent count
   const alertsCount = last24h.filter(eq => eq.magnitude >= 4.0).length;
   document.getElementById('stat-alerts')!.textContent = alertsCount.toString();
@@ -116,7 +116,7 @@ function updateSystemStatus(service: 'api' | 'alerts' | 'map', status: 'online' 
 function setupEventListeners(): void {
   const mobileMenuBtn = document.getElementById('mobile-menu-btn');
   const mobileMenu = document.getElementById('mobile-menu');
-  
+
   mobileMenuBtn?.addEventListener('click', () => {
     mobileMenu?.classList.toggle('hidden');
   });
@@ -127,16 +127,16 @@ function setupEventListeners(): void {
 
   document.getElementById('alert-form')?.addEventListener('submit', (e) => {
     e.preventDefault();
-    
+
     const thresholdSelect = document.getElementById('magnitude-threshold') as HTMLSelectElement;
     const locationInput = document.getElementById('location') as HTMLInputElement;
 
     if (locationInput.value) {
       alertService.subscribeAlerts(
         parseFloat(thresholdSelect.value),
-        locationInput.value
+        locationInput.value,
       );
-      
+
       locationInput.value = '';
     }
   });
@@ -171,7 +171,7 @@ function updateCheckInList(): void {
   if (!container) return;
 
   const checkIns = JSON.parse(localStorage.getItem('check_ins') || '[]');
-  
+
   if (checkIns.length === 0) {
     container.innerHTML = '<p class="text-gray-500 text-sm">No recent check-ins</p>';
     return;
