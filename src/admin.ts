@@ -7,6 +7,9 @@ import Swal from 'sweetalert2';
 errorTrackingService.init();
 adminService.init();
 
+// Setup admin sidebar
+setupAdminSidebar();
+
 // Check authentication state
 setTimeout(() => {
   checkAuthState();
@@ -331,5 +334,83 @@ async function loadEarthquakeEdits(): Promise<void> {
     }
   }
 };
+
+// Setup admin sidebar functionality
+function setupAdminSidebar(): void {
+  const sidebar = document.getElementById('admin-sidebar');
+  const overlay = document.getElementById('admin-sidebar-overlay');
+  const openBtn = document.getElementById('open-admin-sidebar-btn');
+  const closeBtn = document.getElementById('close-admin-sidebar-btn');
+
+  if (!sidebar || !overlay) return;
+
+  const openSidebar = () => {
+    sidebar.classList.remove('translate-x-full');
+    overlay.classList.remove('hidden');
+    updateAdminSidebarContent();
+  };
+
+  const closeSidebar = () => {
+    sidebar.classList.add('translate-x-full');
+    overlay.classList.add('hidden');
+  };
+
+  openBtn?.addEventListener('click', openSidebar);
+  closeBtn?.addEventListener('click', closeSidebar);
+  overlay?.addEventListener('click', closeSidebar);
+
+  // Update sidebar when auth state changes
+  setTimeout(() => {
+    updateAdminSidebarContent();
+  }, 1000);
+}
+
+function updateAdminSidebarContent(): void {
+  const content = document.getElementById('admin-sidebar-content');
+  if (!content) return;
+
+  if (adminService.isAdminUser()) {
+    content.innerHTML = `
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-16 h-16 rounded-full bg-yellow-500 flex items-center justify-center text-white text-2xl">
+          🔐
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Admin</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">System Administrator</p>
+        </div>
+      </div>
+
+      <div class="space-y-3 mb-6">
+        <div class="bg-yellow-50 dark:bg-yellow-900 rounded-lg p-4">
+          <p class="text-sm text-yellow-800 dark:text-yellow-300 font-semibold">Admin Privileges</p>
+          <ul class="mt-2 text-sm text-yellow-700 dark:text-yellow-400 space-y-1">
+            <li>✓ Edit earthquake data</li>
+            <li>✓ Manage community content</li>
+            <li>✓ View system statistics</li>
+            <li>✓ Delete inappropriate content</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="text-center text-xs text-gray-500 dark:text-gray-400">
+        <p>Logged in as</p>
+        <p class="font-semibold">admin@johnrish.website</p>
+      </div>
+    `;
+  } else {
+    content.innerHTML = `
+      <div class="text-center py-8">
+        <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/>
+        </svg>
+        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Not Logged In</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          Please log in to access admin features
+        </p>
+      </div>
+    `;
+  }
+}
 
 console.log('✅ Admin portal initialized');
