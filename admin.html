@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#003366">
+    <title>Admin Portal - Southern Leyte Earthquake Alert System</title>
+    <link rel="stylesheet" href="./src/style.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-phivolcs-blue dark:bg-gray-800 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/>
+                    </svg>
+                    <h1 class="text-2xl font-bold">Admin Portal</h1>
+                </div>
+                <div class="flex gap-4 items-center">
+                    <a href="./index.html" class="hover:text-gray-300 transition">Back to Dashboard</a>
+                    <button id="admin-logout-btn" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition hidden">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-6">
+        <!-- Login Section (shown when not logged in) -->
+        <section id="admin-login-section" class="max-w-md mx-auto mt-12">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+                <h2 class="text-2xl font-bold text-phivolcs-blue dark:text-blue-400 mb-6 text-center">Admin Login</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6 text-center">
+                    Only authorized admin accounts can access this portal.
+                </p>
+                <form id="admin-login-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Email Address
+                        </label>
+                        <input type="email" id="admin-email" required
+                               class="w-full border dark:border-gray-600 rounded px-4 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-phivolcs-blue focus:border-transparent"
+                               placeholder="admin@johnrish.website">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Password
+                        </label>
+                        <input type="password" id="admin-password" required
+                               class="w-full border dark:border-gray-600 rounded px-4 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-phivolcs-blue focus:border-transparent">
+                    </div>
+                    <button type="submit" class="w-full bg-phivolcs-blue text-white px-6 py-3 rounded hover:bg-blue-800 transition">
+                        Login as Admin
+                    </button>
+                </form>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-4 text-center">
+                    Restricted to admin@johnrish.website only
+                </p>
+            </div>
+        </section>
+
+        <!-- Admin Dashboard (shown when logged in) -->
+        <section id="admin-dashboard-section" class="hidden">
+            <!-- Stats Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Community News</h3>
+                    <p id="admin-stat-news" class="text-3xl font-bold text-phivolcs-blue dark:text-blue-400">-</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">User Reports</h3>
+                    <p id="admin-stat-reports" class="text-3xl font-bold text-phivolcs-blue dark:text-blue-400">-</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Comments</h3>
+                    <p id="admin-stat-comments" class="text-3xl font-bold text-phivolcs-blue dark:text-blue-400">-</p>
+                </div>
+            </div>
+
+            <!-- Magnitude Editor -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
+                <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400 mb-4">Edit Earthquake Magnitude</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">
+                    Update earthquake magnitude data when API information is inaccurate. 
+                    An "edited by admin" label will be displayed to maintain transparency.
+                </p>
+                <form id="admin-magnitude-form" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Earthquake ID
+                            </label>
+                            <input type="text" id="magnitude-earthquake-id" required
+                                   class="w-full border dark:border-gray-600 rounded px-4 py-2 dark:bg-gray-700 dark:text-white"
+                                   placeholder="Enter earthquake ID">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                New Magnitude (0-10)
+                            </label>
+                            <input type="number" id="magnitude-new-value" required min="0" max="10" step="0.1"
+                                   class="w-full border dark:border-gray-600 rounded px-4 py-2 dark:bg-gray-700 dark:text-white"
+                                   placeholder="e.g., 5.4">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Reason for Change
+                        </label>
+                        <textarea id="magnitude-reason" rows="3"
+                                  class="w-full border dark:border-gray-600 rounded px-4 py-2 dark:bg-gray-700 dark:text-white"
+                                  placeholder="Optional: Explain why this change is necessary"></textarea>
+                    </div>
+                    <button type="submit" class="bg-phivolcs-blue text-white px-6 py-2 rounded hover:bg-blue-800 transition">
+                        Update Magnitude
+                    </button>
+                </form>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
+                <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400 mb-4">Recent Activity</h2>
+                <div id="admin-activity-list" class="space-y-4">
+                    <p class="text-gray-500 dark:text-gray-400">Loading...</p>
+                </div>
+            </div>
+
+            <!-- Earthquake Edits History -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400 mb-4">Magnitude Edit History</h2>
+                <div id="admin-edits-list" class="space-y-4">
+                    <p class="text-gray-500 dark:text-gray-400">Loading...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="./src/admin.ts"></script>
+</body>
+</html>

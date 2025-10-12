@@ -7,6 +7,11 @@ import { notificationService } from './notificationService';
 import { visualizationService } from './visualizationService';
 import { themeService } from './themeService';
 import { filterService } from './filterService';
+import { shareService } from './shareService';
+import { errorTrackingService } from './errorTrackingService';
+import { performanceService } from './performanceService';
+import { communityService } from './communityService';
+import { adminService } from './adminService';
 import type { Earthquake } from './types';
 
 let currentEarthquakes: Earthquake[] = [];
@@ -19,10 +24,14 @@ async function init(): Promise<void> {
   console.log('🌏 Initializing Southern Leyte Earthquake Alert System...');
   
   // Initialize services
+  errorTrackingService.init();
+  performanceService.init();
   alertService.init();
   themeService.init();
+  adminService.init();
   await indexedDBService.init();
   await notificationService.init();
+  await communityService.init();
   
   mapService.initMap('earthquake-map');
 
