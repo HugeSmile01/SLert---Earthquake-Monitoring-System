@@ -1,6 +1,6 @@
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { initializeApp, FirebaseApp } from 'firebase/app';
+import { getFirestore, Firestore } from 'firebase/firestore';
+import { getAuth, Auth } from 'firebase/auth';
 
 // Firebase configuration - reads from environment variables
 const firebaseConfig = {
@@ -14,9 +14,9 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase only if valid configuration is provided
-let app;
-let db;
-let auth;
+let app: FirebaseApp | undefined;
+let db: Firestore | undefined;
+let auth: Auth | undefined;
 
 try {
   // Check if we have valid Firebase configuration

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Southern Leyte Earthquake Alert System - Real-time monitoring and alerts for earthquake safety. Developed by John Rish Ladica using USGS API.">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https://*.openstreetmap.org; connect-src 'self' https://earthquake.usgs.gov; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://js.sentry-cdn.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https://*.openstreetmap.org; connect-src 'self' https://earthquake.usgs.gov https://sentry.io; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
     <meta name="theme-color" content="#003366">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,6 +16,8 @@
     <title>Southern Leyte Earthquake Alert System</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="./src/style.css">
+    <!-- Sentry Error Tracking (Optional - configure DSN in environment variables) -->
+    <!-- Sentry will be initialized via errorTrackingService.ts -->
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
     <!-- Navigation -->
@@ -33,8 +35,10 @@
                     <a href="#visualizations" class="hover:text-gray-300 transition">Charts</a>
                     <a href="#map" class="hover:text-gray-300 transition">Live Map</a>
                     <a href="#alerts" class="hover:text-gray-300 transition">Alerts</a>
+                    <a href="#community-news" class="hover:text-gray-300 transition">Community</a>
                     <a href="#education" class="hover:text-gray-300 transition">Safety Guide</a>
                     <a href="#checkin" class="hover:text-gray-300 transition">Check-In</a>
+                    <a href="./admin.html" class="text-yellow-300 hover:text-yellow-100 transition">🔐 Admin</a>
                     <button id="theme-toggle" class="text-2xl hover:scale-110 transition-transform" title="Toggle dark mode">
                         <span id="theme-icon">🌙</span>
                     </button>
@@ -55,8 +59,10 @@
             <a href="#visualizations" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Charts</a>
             <a href="#map" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Live Map</a>
             <a href="#alerts" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Alerts</a>
+            <a href="#community-news" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Community</a>
             <a href="#education" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Safety Guide</a>
             <a href="#checkin" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Check-In</a>
+            <a href="./admin.html" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded text-yellow-300">🔐 Admin Portal</a>
             <button id="theme-toggle-mobile" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded text-left">
                 <span id="theme-icon-mobile">🌙</span> Toggle Theme
             </button>
@@ -333,6 +339,40 @@
                 </button>
                 <div id="checkin-list" class="mt-6 space-y-2">
                     <!-- Check-ins will be displayed here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Community News Section -->
+        <section id="community-news" class="mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400">Community News</h2>
+                    <div class="flex gap-2 items-center">
+                        <span id="posts-remaining" class="text-sm text-gray-600 dark:text-gray-400"></span>
+                        <button id="donate-btn" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition text-sm">
+                            💖 Donate
+                        </button>
+                    </div>
+                </div>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">Share updates and information with the community (1-2 posts per day)</p>
+                
+                <!-- Post Form -->
+                <form id="community-news-form" class="mb-6">
+                    <textarea id="news-content" rows="3" maxlength="500" required
+                              class="w-full border dark:border-gray-600 rounded px-4 py-2 dark:bg-gray-700 dark:text-white mb-2"
+                              placeholder="Share earthquake updates, safety tips, or community news... (10-500 characters)"></textarea>
+                    <div class="flex justify-between items-center">
+                        <span id="news-char-count" class="text-sm text-gray-500">0/500</span>
+                        <button type="submit" class="bg-phivolcs-blue text-white px-6 py-2 rounded hover:bg-blue-800 transition">
+                            Post News
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- News Feed -->
+                <div id="community-news-list" class="space-y-4">
+                    <p class="text-gray-500 dark:text-gray-400 text-center py-4">Loading news...</p>
                 </div>
             </div>
         </section>

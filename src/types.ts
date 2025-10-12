@@ -10,6 +10,8 @@ export interface Earthquake {
   url: string;
   felt?: number;
   alert?: string;
+  editedByAdmin?: boolean;
+  originalMagnitude?: number;
 }
 
 export interface EarthquakeResponse {
@@ -28,4 +30,36 @@ export interface EarthquakeResponse {
       coordinates: [number, number, number];
     };
   }>;
+}
+
+export interface CommunityNews {
+  id: string;
+  userId: string;
+  userName: string;
+  content: string;
+  timestamp: number;
+  hearts: number;
+  heartedBy: string[];
+}
+
+export interface EarthquakeReport {
+  id: string;
+  earthquakeId: string;
+  userId: string;
+  userName: string;
+  experience: string;
+  intensity: number;
+  timestamp: number;
+  upvotes: number;
+  downvotes: number;
+  votedBy: { [userId: string]: 'up' | 'down' };
+}
+
+export interface Comment {
+  id: string;
+  earthquakeId: string;
+  userId: string;
+  userName: string;
+  content: string;
+  timestamp: number;
 }

@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { resolve } from 'path';
 
 export default defineConfig({
   // Base path for GitHub Pages (repository name)
@@ -20,6 +21,10 @@ export default defineConfig({
     
     // Code splitting for better performance
     rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        admin: resolve(__dirname, 'admin.html'),
+      },
       output: {
         manualChunks: {
           // Separate Firebase from main bundle
