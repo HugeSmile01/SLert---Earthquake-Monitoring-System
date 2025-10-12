@@ -93,21 +93,24 @@ The system uses Firebase for real-time data storage and notifications. To enable
    - Enable Authentication (optional for user management)
 
 2. **Configure Firebase:**
-   - Update `src/firebase.ts` with your Firebase config:
-   ```typescript
-   const firebaseConfig = {
-     apiKey: "YOUR_API_KEY",
-     authDomain: "YOUR_AUTH_DOMAIN",
-     projectId: "YOUR_PROJECT_ID",
-     storageBucket: "YOUR_STORAGE_BUCKET",
-     messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-     appId: "YOUR_APP_ID"
-   };
+   - Copy `.env.example` to `.env` and add your Firebase config:
+   ```env
+   VITE_FIREBASE_API_KEY=your_api_key
+   VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
+   VITE_FIREBASE_PROJECT_ID=your_project_id
+   VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+   VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+   VITE_FIREBASE_APP_ID=your_app_id
+   VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
    ```
+   
+   - Or set these as environment variables in your deployment platform
+   - For GitHub Actions, add these as repository secrets
 
-3. **Initialize Firebase:**
-   - Uncomment the initialization code in `src/firebase.ts`
-   - Import and use Firebase services in your components
+3. **Firebase Initialization:**
+   - Firebase is automatically initialized when valid credentials are provided
+   - The system will use placeholder values if no credentials are configured
+   - Check the console for "✅ Firebase initialized successfully" message
 
 4. **Firestore Structure:**
    ```
