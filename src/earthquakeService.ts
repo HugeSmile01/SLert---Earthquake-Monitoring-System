@@ -17,75 +17,117 @@ class EarthquakeService {
   private retryDelay: number = 2000;
 
   async fetchEarthquakes(timeframe: 'hour' | 'day' | 'week' | 'month' = 'week'): Promise<Earthquake[]> {
-    const now = Date.now();
-    
-    if (now - this.lastFetch < this.cacheDuration && this.cachedData.length > 0) {
-      return this.cachedData;
-    }
-
-    // Try to fetch from API
     try {
-      const earthquakes = await this.fetchWithRetry(timeframe);
+      const now = Date.now();
       
-      // Save to IndexedDB for offline access
-      if (earthquakes.length > 0) {
-        await indexedDBService.saveEarthquakes(earthquakes);
+      if (now - this.lastFetch < this.cacheDuration && this.cachedData.length > 0) {
+        return this.cachedData;
       }
-      
-      return earthquakes;
-    } catch (error) {
-      console.error('Failed to fetch from API, trying IndexedDB...');
-      
-      // Fallback to IndexedDB if API fails
+
       try {
-        const cachedEarthquakes = await indexedDBService.getAllEarthquakes();
-        if (cachedEarthquakes.length > 0) {
-          console.log('Loaded earthquakes from IndexedDB cache');
-          this.cachedData = cachedEarthquakes;
-          return cachedEarthquakes;
+        const earthquakes = await this.fetchWithRetry(timeframe);
+        
+        if (earthquakes.length > 0) {
+          try {
+            await indexedDBService.saveEarthquakes(earthquakes);
+          } catch (saveError) {
+            console.error('Failed to save to IndexedDB:', saveError);
+          }
         }
-      } catch (dbError) {
-        console.error('Failed to load from IndexedDB:', dbError);
+        
+        return earthquakes;
+      } catch (apiError) {
+        console.error('Failed to fetch from API, trying IndexedDB...');
+        
+        try {
+          const cachedEarthquakes = await indexedDBService.getAllEarthquakes();
+          if (cachedEarthquakes.length > 0) {
+            console.log('Loaded earthquakes from IndexedDB cache');
+            this.cachedData = cachedEarthquakes;
+            return cachedEarthquakes;
+          }
+        } catch (dbError) {
+          console.error('Failed to load from IndexedDB:', dbError);
+        }
+        
+        if (this.cachedData.length > 0) {
+          console.log('Returning in-memory cached data');
+          return this.cachedData;
+        }
+
+        throw new Error('No earthquake data available from any source');
       }
-      
-      return this.cachedData;
+    } catch (error) {
+      console.error('Critical error in fetchEarthquakes:', error);
+      return this.cachedData.length > 0 ? this.cachedData : [];
     }
   }
 
   private async fetchWithRetry(timeframe: string, attempt: number = 1): Promise<Earthquake[]> {
     try {
+      if (!timeframe || typeof timeframe !== 'string') {
+        throw new Error('Invalid timeframe parameter');
+      }
+
       const url = `${USGS_API_BASE}/all_${timeframe}.geojson`;
-      const response = await fetch(url);
+      
+      let response;
+      try {
+        response = await fetch(url);
+      } catch (fetchError) {
+        throw new Error(`Network error: ${(fetchError as Error).message}`);
+      }
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      const data: EarthquakeResponse = await response.json();
+      let data: EarthquakeResponse;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        throw new Error('Failed to parse earthquake data');
+      }
+
+      if (!data.features || !Array.isArray(data.features)) {
+        throw new Error('Invalid earthquake data format');
+      }
       
-      const earthquakes = data.features
-        .filter(feature => {
-          const [lng, lat] = feature.geometry.coordinates;
-          return (
-            lat >= SOUTHERN_LEYTE_BOUNDS.minLat &&
-            lat <= SOUTHERN_LEYTE_BOUNDS.maxLat &&
-            lng >= SOUTHERN_LEYTE_BOUNDS.minLng &&
-            lng <= SOUTHERN_LEYTE_BOUNDS.maxLng
-          );
+      const rawEarthquakes = data.features
+        .map(feature => {
+          try {
+            if (!feature.geometry || !feature.geometry.coordinates) {
+              return null;
+            }
+            const [lng, lat] = feature.geometry.coordinates;
+            if (!(lat >= SOUTHERN_LEYTE_BOUNDS.minLat &&
+                  lat <= SOUTHERN_LEYTE_BOUNDS.maxLat &&
+                  lng >= SOUTHERN_LEYTE_BOUNDS.minLng &&
+                  lng <= SOUTHERN_LEYTE_BOUNDS.maxLng)) {
+              return null;
+            }
+
+            return {
+              id: feature.id,
+              magnitude: feature.properties.mag,
+              place: feature.properties.place,
+              time: feature.properties.time,
+              latitude: feature.geometry.coordinates[1],
+              longitude: feature.geometry.coordinates[0],
+              depth: feature.geometry.coordinates[2],
+              url: feature.properties.url,
+              felt: feature.properties.felt,
+              alert: feature.properties.alert,
+            };
+          } catch (error) {
+            console.error('Error mapping earthquake feature:', error);
+            return null;
+          }
         })
-        .map(feature => ({
-          id: feature.id,
-          magnitude: feature.properties.mag,
-          place: feature.properties.place,
-          time: feature.properties.time,
-          latitude: feature.geometry.coordinates[1],
-          longitude: feature.geometry.coordinates[0],
-          depth: feature.geometry.coordinates[2],
-          url: feature.properties.url,
-          felt: feature.properties.felt,
-          alert: feature.properties.alert,
-        }))
-        .sort((a, b) => b.time - a.time);
+        .filter(eq => eq !== null);
+
+      const earthquakes: Earthquake[] = rawEarthquakes as Earthquake[];
+      earthquakes.sort((a, b) => b.time - a.time);
 
       this.cachedData = earthquakes;
       this.lastFetch = Date.now();
@@ -99,7 +141,7 @@ class EarthquakeService {
         return this.fetchWithRetry(timeframe, attempt + 1);
       }
       
-      return this.cachedData;
+      throw error;
     }
   }
 
@@ -108,57 +150,127 @@ class EarthquakeService {
   }
 
   getEarthquakesByTimeRange(earthquakes: Earthquake[], hours: number): Earthquake[] {
-    const cutoff = Date.now() - hours * 60 * 60 * 1000;
-    return earthquakes.filter(eq => eq.time >= cutoff);
+    try {
+      if (!earthquakes || !Array.isArray(earthquakes)) {
+        console.error('Invalid earthquakes array');
+        return [];
+      }
+      if (!hours || hours < 0) {
+        console.error('Invalid hours parameter');
+        return earthquakes;
+      }
+      const cutoff = Date.now() - hours * 60 * 60 * 1000;
+      return earthquakes.filter(eq => eq && eq.time >= cutoff);
+    } catch (error) {
+      console.error('Error filtering earthquakes by time range:', error);
+      return [];
+    }
   }
 
   getStrongestEarthquake(earthquakes: Earthquake[]): Earthquake | null {
-    if (earthquakes.length === 0) return null;
-    return earthquakes.reduce((strongest, current) => 
-      current.magnitude > strongest.magnitude ? current : strongest
-    );
+    try {
+      if (!earthquakes || !Array.isArray(earthquakes) || earthquakes.length === 0) {
+        return null;
+      }
+      return earthquakes.reduce((strongest, current) => {
+        try {
+          return current.magnitude > strongest.magnitude ? current : strongest;
+        } catch (error) {
+          return strongest;
+        }
+      });
+    } catch (error) {
+      console.error('Error finding strongest earthquake:', error);
+      return null;
+    }
   }
 
   filterByMagnitude(earthquakes: Earthquake[], minMagnitude: number): Earthquake[] {
-    return earthquakes.filter(eq => eq.magnitude >= minMagnitude);
+    try {
+      if (!earthquakes || !Array.isArray(earthquakes)) {
+        console.error('Invalid earthquakes array');
+        return [];
+      }
+      if (isNaN(minMagnitude)) {
+        console.error('Invalid minMagnitude parameter');
+        return earthquakes;
+      }
+      return earthquakes.filter(eq => eq && eq.magnitude >= minMagnitude);
+    } catch (error) {
+      console.error('Error filtering earthquakes by magnitude:', error);
+      return [];
+    }
   }
 
   getMagnitudeColor(magnitude: number): string {
-    if (magnitude >= 7.0) return '#dc2626';
-    if (magnitude >= 5.5) return '#f97316';
-    if (magnitude >= 4.0) return '#facc15';
-    return '#16a34a';
+    try {
+      if (isNaN(magnitude)) {
+        console.error('Invalid magnitude value');
+        return '#16a34a';
+      }
+      if (magnitude >= 7.0) return '#dc2626';
+      if (magnitude >= 5.5) return '#f97316';
+      if (magnitude >= 4.0) return '#facc15';
+      return '#16a34a';
+    } catch (error) {
+      console.error('Error getting magnitude color:', error);
+      return '#16a34a';
+    }
   }
 
   getMagnitudeLabel(magnitude: number): string {
-    if (magnitude >= 7.0) return 'Major';
-    if (magnitude >= 5.5) return 'Strong';
-    if (magnitude >= 4.0) return 'Moderate';
-    return 'Minor';
+    try {
+      if (isNaN(magnitude)) {
+        console.error('Invalid magnitude value');
+        return 'Unknown';
+      }
+      if (magnitude >= 7.0) return 'Major';
+      if (magnitude >= 5.5) return 'Strong';
+      if (magnitude >= 4.0) return 'Moderate';
+      return 'Minor';
+    } catch (error) {
+      console.error('Error getting magnitude label:', error);
+      return 'Unknown';
+    }
   }
 
   formatTime(timestamp: number): string {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
+    try {
+      if (!timestamp || isNaN(timestamp)) {
+        console.error('Invalid timestamp');
+        return 'Unknown';
+      }
 
-    if (diffMins < 60) {
-      return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`;
-    } else if (diffHours < 24) {
-      return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
-    } else if (diffDays < 7) {
-      return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
-    } else {
-      return date.toLocaleDateString('en-PH', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
+      const date = new Date(timestamp);
+      if (isNaN(date.getTime())) {
+        console.error('Invalid date from timestamp');
+        return 'Unknown';
+      }
+
+      const now = new Date();
+      const diffMs = now.getTime() - date.getTime();
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+
+      if (diffMins < 60) {
+        return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`;
+      } else if (diffHours < 24) {
+        return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+      } else if (diffDays < 7) {
+        return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+      } else {
+        return date.toLocaleDateString('en-PH', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+      }
+    } catch (error) {
+      console.error('Error formatting time:', error);
+      return 'Unknown';
     }
   }
 }
