@@ -7,17 +7,7 @@
     <meta name="theme-color" content="#003366">
     <title>Admin Portal - Southern Leyte Earthquake Alert System</title>
     <link rel="stylesheet" href="./src/style.css">
-    <!-- Sentry Error Tracking (Optional - configure DSN in environment variables) -->
-    <!-- Replace YOUR_SENTRY_KEY with actual Sentry key from environment during build -->
-    <script>
-      // Load Sentry only if DSN is configured
-      if (window.location.hostname !== 'localhost' && 'VITE_SENTRY_DSN' in import.meta.env) {
-        const script = document.createElement('script');
-        script.src = 'https://js.sentry-cdn.com/' + import.meta.env.VITE_SENTRY_DSN.split('@')[1].split('/')[0] + '.min.js';
-        script.crossOrigin = 'anonymous';
-        document.head.appendChild(script);
-      }
-    </script>
+    <!-- Sentry Error Tracking initialized via errorTrackingService.ts -->
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
     <!-- Navigation -->
