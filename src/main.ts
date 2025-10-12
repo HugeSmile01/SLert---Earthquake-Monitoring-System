@@ -74,7 +74,9 @@ async function refreshData(): Promise<void> {
     console.log(`✅ Loaded ${currentEarthquakes.length} earthquakes`);
   } catch (error) {
     console.error('❌ Error refreshing data:', error);
+    errorTrackingService.captureException(error as Error, { context: 'refreshData' });
     updateSystemStatus('api', 'offline');
+    alertService.showAlert('Failed to fetch earthquake data. Retrying in 60 seconds...', 'danger');
   }
 }
 
@@ -121,9 +123,9 @@ function updateEarthquakeList(earthquakes: Earthquake[]): void {
       '<span class="ml-2 px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 text-xs rounded">✏️ Edited by Admin</span>' : '';
 
     return `
-      <div class="border dark:border-gray-600 rounded-lg p-4 hover:shadow-md transition bg-white dark:bg-gray-700">
+      <div class="border dark:border-gray-600 rounded-lg p-4 hover:shadow-md transition bg-white dark:bg-gray-700 fade-in">
         <div class="flex items-start justify-between">
-          <div class="flex-1" onclick="window.open('${earthquake.url}', '_blank')" style="cursor: pointer;">
+          <div class="flex-1" onclick="window.open('${earthquake.url}', '_blank')" style="cursor: pointer;" role="button" tabindex="0" aria-label="View earthquake details">
             <div class="flex items-center gap-3 mb-2 flex-wrap">
               <span class="text-2xl font-bold" style="color: ${color};">
                 M${earthquake.magnitude.toFixed(1)}
@@ -144,15 +146,17 @@ function updateEarthquakeList(earthquakes: Earthquake[]): void {
           <div class="flex flex-col gap-2 ml-2">
             <button onclick="shareEarthquake('${earthquake.id}'); event.stopPropagation();" 
                     class="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition" 
-                    title="Share earthquake">
-              <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    title="Share earthquake"
+                    aria-label="Share earthquake information">
+              <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
               </svg>
             </button>
             <button onclick="window.open('${earthquake.url}', '_blank'); event.stopPropagation();" 
                     class="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition" 
-                    title="View details">
-              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    title="View details"
+                    aria-label="View earthquake details on USGS">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
               </svg>
             </button>
@@ -530,7 +534,7 @@ async function updateCommunityNewsUI(): Promise<void> {
       const hasHearted = news.heartedBy?.includes(communityService.getCurrentUserId() || '') || false;
       
       return `
-        <div class="border dark:border-gray-700 rounded-lg p-4">
+        <div class="border dark:border-gray-700 rounded-lg p-4 fade-in">
           <div class="flex justify-between items-start mb-2">
             <div>
               <span class="font-semibold text-gray-700 dark:text-gray-300">${news.userName}</span>
@@ -547,6 +551,11 @@ async function updateCommunityNewsUI(): Promise<void> {
     }).join('');
   } catch (error) {
     console.error('Error updating community news UI:', error);
+    errorTrackingService.captureException(error as Error, { context: 'updateCommunityNewsUI' });
+    const container = document.getElementById('community-news-list');
+    if (container) {
+      container.innerHTML = '<p class="text-red-500 dark:text-red-400 text-center py-4">Failed to load community news. Please try again later.</p>';
+    }
   }
 }
 
@@ -595,8 +604,11 @@ async function handleDonation(): Promise<void> {
   if (earthquake) {
     try {
       await shareService.shareEarthquake(earthquake);
+      alertService.showAlert('Earthquake data shared successfully!', 'info');
     } catch (error) {
       console.error('Error sharing earthquake:', error);
+      errorTrackingService.captureException(error as Error, { context: 'shareEarthquake' });
+      alertService.showAlert('Failed to share earthquake data', 'danger');
     }
   }
 };

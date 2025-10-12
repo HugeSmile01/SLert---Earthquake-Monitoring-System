@@ -21,14 +21,14 @@
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
     <!-- Navigation -->
-    <nav class="bg-phivolcs-blue dark:bg-gray-800 text-white shadow-lg">
+    <nav class="bg-phivolcs-blue dark:bg-gray-800 text-white shadow-lg" role="navigation" aria-label="Main navigation">
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                         <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
                     </svg>
-                    <h1 class="text-2xl font-bold">Southern Leyte EarthquakeAlert</h1>
+                    <h1 class="text-2xl font-bold">Southern Leyte Earthquake Alert</h1>
                 </div>
                 <div class="hidden md:flex gap-6 items-center">
                     <a href="#dashboard" class="hover:text-gray-300 transition">Dashboard</a>
@@ -39,17 +39,17 @@
                     <a href="#education" class="hover:text-gray-300 transition">Safety Guide</a>
                     <a href="#checkin" class="hover:text-gray-300 transition">Check-In</a>
                     <a href="./admin.html" class="text-yellow-300 hover:text-yellow-100 transition">🔐 Admin</a>
-                    <button id="theme-toggle" class="text-2xl hover:scale-110 transition-transform" title="Toggle dark mode">
-                        <span id="theme-icon">🌙</span>
+                    <button id="theme-toggle" class="text-2xl hover:scale-110 transition-transform" title="Toggle dark mode" aria-label="Toggle dark mode">
+                        <span id="theme-icon" aria-hidden="true">🌙</span>
                     </button>
-                    <button id="open-sidebar-btn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded transition">
-                        <svg class="w-5 h-5 inline" fill="currentColor" viewBox="0 0 20 20">
+                    <button id="open-sidebar-btn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded transition" aria-label="Open user account">
+                        <svg class="w-5 h-5 inline" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/>
                         </svg>
                     </button>
                 </div>
-                <button id="mobile-menu-btn" class="md:hidden">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button id="mobile-menu-btn" class="md:hidden" aria-label="Toggle mobile menu" aria-expanded="false">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
@@ -58,20 +58,20 @@
     </nav>
 
     <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden md:hidden bg-phivolcs-blue dark:bg-gray-800 text-white">
+    <div id="mobile-menu" class="hidden md:hidden bg-phivolcs-blue dark:bg-gray-800 text-white" role="menu" aria-label="Mobile navigation">
         <div class="container mx-auto px-4 py-2 flex flex-col gap-2">
-            <a href="#dashboard" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Dashboard</a>
-            <a href="#visualizations" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Charts</a>
-            <a href="#map" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Live Map</a>
-            <a href="#alerts" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Alerts</a>
-            <a href="#community-news" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Community</a>
-            <a href="#education" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Safety Guide</a>
-            <a href="#checkin" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Check-In</a>
-            <a href="./admin.html" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded text-yellow-300">🔐 Admin Portal</a>
-            <button id="theme-toggle-mobile" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded text-left">
-                <span id="theme-icon-mobile">🌙</span> Toggle Theme
+            <a href="#dashboard" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded" role="menuitem">Dashboard</a>
+            <a href="#visualizations" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded" role="menuitem">Charts</a>
+            <a href="#map" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded" role="menuitem">Live Map</a>
+            <a href="#alerts" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded" role="menuitem">Alerts</a>
+            <a href="#community-news" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded" role="menuitem">Community</a>
+            <a href="#education" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded" role="menuitem">Safety Guide</a>
+            <a href="#checkin" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded" role="menuitem">Check-In</a>
+            <a href="./admin.html" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded text-yellow-300" role="menuitem">🔐 Admin Portal</a>
+            <button id="theme-toggle-mobile" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded text-left" aria-label="Toggle theme">
+                <span id="theme-icon-mobile" aria-hidden="true">🌙</span> Toggle Theme
             </button>
-            <button id="open-sidebar-btn-mobile" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded text-left">
+            <button id="open-sidebar-btn-mobile" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded text-left" aria-label="Open account">
                 👤 Account
             </button>
         </div>
