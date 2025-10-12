@@ -1,4 +1,5 @@
 import type { Earthquake, EarthquakeResponse } from './types';
+import { indexedDBService } from './indexedDBService';
 
 const USGS_API_BASE = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary';
 const SOUTHERN_LEYTE_BOUNDS = {
@@ -22,7 +23,33 @@ class EarthquakeService {
       return this.cachedData;
     }
 
-    return this.fetchWithRetry(timeframe);
+    // Try to fetch from API
+    try {
+      const earthquakes = await this.fetchWithRetry(timeframe);
+      
+      // Save to IndexedDB for offline access
+      if (earthquakes.length > 0) {
+        await indexedDBService.saveEarthquakes(earthquakes);
+      }
+      
+      return earthquakes;
+    } catch (error) {
+      console.error('Failed to fetch from API, trying IndexedDB...');
+      
+      // Fallback to IndexedDB if API fails
+      try {
+        const cachedEarthquakes = await indexedDBService.getAllEarthquakes();
+        if (cachedEarthquakes.length > 0) {
+          console.log('Loaded earthquakes from IndexedDB cache');
+          this.cachedData = cachedEarthquakes;
+          return cachedEarthquakes;
+        }
+      } catch (dbError) {
+        console.error('Failed to load from IndexedDB:', dbError);
+      }
+      
+      return this.cachedData;
+    }
   }
 
   private async fetchWithRetry(timeframe: string, attempt: number = 1): Promise<Earthquake[]> {

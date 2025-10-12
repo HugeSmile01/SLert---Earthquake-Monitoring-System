@@ -16,14 +16,35 @@ A comprehensive, real-time earthquake monitoring and alert system specifically d
 - **Real-time Earthquake Monitoring** - Live data from USGS API filtered for Southern Leyte region
 - **Interactive Map Visualization** - Leaflet.js powered map showing earthquake locations and magnitudes
 - **SweetAlert2 Notifications** - Beautiful, user-friendly alerts for significant earthquakes
-- **Firebase Integration** - Ready for real-time data storage and push notifications
+- **Browser Push Notifications** - Real-time alerts for significant earthquakes using Browser Push API
 - **Progressive Web App** - Install as a mobile app with offline capability
+- **Offline Support** - Enhanced service worker with API data caching for offline viewing
+- **Local Data Caching** - IndexedDB for storing earthquake history and reducing API calls
 - **Community Check-In** - Let friends and family know you're safe after an earthquake
 - **Educational Resources** - Comprehensive earthquake preparedness and safety guides
 - **Historical Data** - View and analyze past earthquake records
 - **Responsive Design** - Mobile-first design works perfectly on all devices
 - **Enhanced Security** - Input validation, rate limiting, and CSP headers
 - **Reliable Data Fetching** - Automatic retry logic for API failures
+
+### Data Visualization Features
+- **Magnitude Trends Chart** - Track average and maximum magnitude over time
+- **Frequency Distribution** - Bar chart showing earthquake count by magnitude range
+- **Depth Analysis** - Scatter plot correlating earthquake depth with magnitude
+- **Interactive Charts** - Powered by Chart.js with responsive design
+
+### Filtering & Search Features
+- **Advanced Filtering** - Filter earthquakes by magnitude range and location
+- **Real-time Search** - Search earthquakes by location name
+- **Sortable Data** - Sort by time, magnitude, depth, or location
+- **Pagination** - Navigate through large datasets efficiently
+- **Data Export** - Export filtered data as CSV or JSON
+
+### User Interface Features
+- **Dark Mode** - Toggle between light and dark themes with automatic persistence
+- **Responsive Tables** - Mobile-friendly earthquake listings with pagination
+- **Sort Controls** - Click to sort data by various attributes
+- **Filter Controls** - Easy-to-use magnitude and location filters
 
 ### Dashboard Statistics
 - Earthquakes in last 24 hours
@@ -37,8 +58,11 @@ A comprehensive, real-time earthquake monitoring and alert system specifically d
 - **Frontend:** TypeScript, HTML5, Tailwind CSS
 - **Build Tool:** Vite
 - **Maps:** Leaflet.js with OpenStreetMap
+- **Charts:** Chart.js for data visualization
+- **Data Storage:** IndexedDB for local caching
 - **Data Source:** USGS Earthquake API
 - **Alerts:** SweetAlert2 for beautiful notifications
+- **Browser Notifications:** Notification API for real-time alerts
 - **PWA Features:** Service Worker, Web App Manifest
 - **Security:** Input validation, rate limiting, CSP headers
 - **Backend:** Firebase (Authentication, Firestore, Cloud Functions)
@@ -185,15 +209,52 @@ colors: {
 ## 📱 Progressive Web App (PWA)
 
 The application is a fully functional PWA with:
-- **Offline Support:** Service worker caches essential resources
+- **Offline Support:** Service worker caches essential resources and API data
 - **Installable:** Add to home screen on mobile devices
 - **App-like Experience:** Standalone display mode
 - **Fast Loading:** Cached resources load instantly
+- **Background Sync:** Automatic data updates when online
 
 ### Installing the PWA:
 1. Open the app in a mobile browser
 2. Tap the "Add to Home Screen" option
 3. The app will be installed like a native app
+
+## 🎯 Using the New Features
+
+### Dark Mode
+- Click the theme toggle button (🌙/☀️) in the navigation bar
+- Theme preference is saved to localStorage
+- Automatically adapts to system preferences on first visit
+
+### Browser Notifications
+1. Click the "🔔 Enable Notifications" button
+2. Grant notification permission when prompted
+3. Receive real-time alerts for earthquakes above your threshold
+4. Notifications work even when the tab is not active
+
+### Filtering & Search
+- **Min/Max Magnitude:** Use sliders to filter earthquake magnitudes
+- **Search:** Type location names to filter results
+- **Sort:** Click column headers (Time, Magnitude, Depth, Location) to sort
+- **Pagination:** Navigate through results using page buttons
+
+### Data Export
+- Click "📊 Export CSV" to download data as a spreadsheet
+- Click "📄 Export JSON" to download data as JSON
+- Exported data respects current filters
+
+### Data Visualization
+- View the **Charts** section for visual insights
+- **Magnitude Trends:** Track changes over time
+- **Frequency Distribution:** See earthquake distribution by magnitude
+- **Depth Analysis:** Correlate depth with magnitude
+
+### Offline Mode
+- The app automatically caches earthquake data
+- Works offline with last cached data
+- Service worker caches API responses for 24 hours
+- IndexedDB stores up to 30 days of earthquake history
 
 ## 🔒 Security Features
 

@@ -17,9 +17,9 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="./src/style.css">
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
     <!-- Navigation -->
-    <nav class="bg-phivolcs-blue text-white shadow-lg">
+    <nav class="bg-phivolcs-blue dark:bg-gray-800 text-white shadow-lg">
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
@@ -28,12 +28,16 @@
                     </svg>
                     <h1 class="text-2xl font-bold">Southern Leyte EarthquakeAlert</h1>
                 </div>
-                <div class="hidden md:flex gap-6">
+                <div class="hidden md:flex gap-6 items-center">
                     <a href="#dashboard" class="hover:text-gray-300 transition">Dashboard</a>
+                    <a href="#visualizations" class="hover:text-gray-300 transition">Charts</a>
                     <a href="#map" class="hover:text-gray-300 transition">Live Map</a>
                     <a href="#alerts" class="hover:text-gray-300 transition">Alerts</a>
                     <a href="#education" class="hover:text-gray-300 transition">Safety Guide</a>
                     <a href="#checkin" class="hover:text-gray-300 transition">Check-In</a>
+                    <button id="theme-toggle" class="text-2xl hover:scale-110 transition-transform" title="Toggle dark mode">
+                        <span id="theme-icon">🌙</span>
+                    </button>
                 </div>
                 <button id="mobile-menu-btn" class="md:hidden">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,13 +49,17 @@
     </nav>
 
     <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden md:hidden bg-phivolcs-blue text-white">
+    <div id="mobile-menu" class="hidden md:hidden bg-phivolcs-blue dark:bg-gray-800 text-white">
         <div class="container mx-auto px-4 py-2 flex flex-col gap-2">
-            <a href="#dashboard" class="py-2 hover:bg-blue-800 px-2 rounded">Dashboard</a>
-            <a href="#map" class="py-2 hover:bg-blue-800 px-2 rounded">Live Map</a>
-            <a href="#alerts" class="py-2 hover:bg-blue-800 px-2 rounded">Alerts</a>
-            <a href="#education" class="py-2 hover:bg-blue-800 px-2 rounded">Safety Guide</a>
-            <a href="#checkin" class="py-2 hover:bg-blue-800 px-2 rounded">Check-In</a>
+            <a href="#dashboard" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Dashboard</a>
+            <a href="#visualizations" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Charts</a>
+            <a href="#map" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Live Map</a>
+            <a href="#alerts" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Alerts</a>
+            <a href="#education" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Safety Guide</a>
+            <a href="#checkin" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded">Check-In</a>
+            <button id="theme-toggle-mobile" class="py-2 hover:bg-blue-800 dark:hover:bg-gray-700 px-2 rounded text-left">
+                <span id="theme-icon-mobile">🌙</span> Toggle Theme
+            </button>
         </div>
     </div>
 
@@ -61,56 +69,56 @@
         <section id="dashboard" class="mb-8">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <!-- Stat Cards -->
-                <div class="bg-white rounded-lg shadow p-6">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-gray-600 text-sm">Last 24 Hours</p>
-                            <p id="stat-24h" class="text-3xl font-bold text-phivolcs-blue">-</p>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">Last 24 Hours</p>
+                            <p id="stat-24h" class="text-3xl font-bold text-phivolcs-blue dark:text-blue-400">-</p>
                         </div>
-                        <div class="bg-blue-100 p-3 rounded-full">
-                            <svg class="w-8 h-8 text-phivolcs-blue" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-full">
+                            <svg class="w-8 h-8 text-phivolcs-blue dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
                             </svg>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-lg shadow p-6">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-gray-600 text-sm">Last 7 Days</p>
-                            <p id="stat-7d" class="text-3xl font-bold text-phivolcs-blue">-</p>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">Last 7 Days</p>
+                            <p id="stat-7d" class="text-3xl font-bold text-phivolcs-blue dark:text-blue-400">-</p>
                         </div>
-                        <div class="bg-green-100 p-3 rounded-full">
-                            <svg class="w-8 h-8 text-safe-green" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="bg-green-100 dark:bg-green-900 p-3 rounded-full">
+                            <svg class="w-8 h-8 text-safe-green dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
                             </svg>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-lg shadow p-6">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-gray-600 text-sm">Strongest Today</p>
-                            <p id="stat-strongest" class="text-3xl font-bold text-alert-red">-</p>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">Strongest Today</p>
+                            <p id="stat-strongest" class="text-3xl font-bold text-alert-red dark:text-red-400">-</p>
                         </div>
-                        <div class="bg-red-100 p-3 rounded-full">
-                            <svg class="w-8 h-8 text-alert-red" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="bg-red-100 dark:bg-red-900 p-3 rounded-full">
+                            <svg class="w-8 h-8 text-alert-red dark:text-red-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd"/>
                             </svg>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-lg shadow p-6">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-gray-600 text-sm">Alerts Triggered</p>
-                            <p id="stat-alerts" class="text-3xl font-bold text-phivolcs-blue">-</p>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">Alerts Triggered</p>
+                            <p id="stat-alerts" class="text-3xl font-bold text-phivolcs-blue dark:text-blue-400">-</p>
                         </div>
-                        <div class="bg-yellow-100 p-3 rounded-full">
-                            <svg class="w-8 h-8 text-warning-yellow" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="bg-yellow-100 dark:bg-yellow-900 p-3 rounded-full">
+                            <svg class="w-8 h-8 text-warning-yellow dark:text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                             </svg>
                         </div>
@@ -119,20 +127,52 @@
             </div>
 
             <!-- System Status -->
-            <div class="bg-white rounded-lg shadow p-6 mb-6">
-                <h2 class="text-xl font-bold text-phivolcs-blue mb-4">System Status</h2>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+                <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400 mb-4">System Status</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="flex items-center gap-3">
                         <div id="status-api" class="w-3 h-3 rounded-full bg-safe-green"></div>
-                        <span class="text-gray-700">USGS API</span>
+                        <span class="text-gray-700 dark:text-gray-300">USGS API</span>
                     </div>
                     <div class="flex items-center gap-3">
                         <div id="status-alerts" class="w-3 h-3 rounded-full bg-safe-green"></div>
-                        <span class="text-gray-700">Alert Service</span>
+                        <span class="text-gray-700 dark:text-gray-300">Alert Service</span>
                     </div>
                     <div class="flex items-center gap-3">
                         <div id="status-map" class="w-3 h-3 rounded-full bg-safe-green"></div>
-                        <span class="text-gray-700">Map Service</span>
+                        <span class="text-gray-700 dark:text-gray-300">Map Service</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Visualization Section -->
+        <section id="visualizations" class="mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400 mb-6">Earthquake Data Visualization</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">Magnitude Trends</h3>
+                        <div class="h-64">
+                            <canvas id="magnitude-trend-chart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">Frequency by Magnitude</h3>
+                        <div class="h-64">
+                            <canvas id="frequency-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">Depth vs Magnitude</h3>
+                        <div class="h-64">
+                            <canvas id="depth-chart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -140,25 +180,25 @@
 
         <!-- Map Section -->
         <section id="map" class="mb-8">
-            <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-xl font-bold text-phivolcs-blue mb-4">Live Earthquake Map</h2>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400 mb-4">Live Earthquake Map</h2>
                 <div id="earthquake-map" class="w-full h-96 rounded-lg"></div>
                 <div class="mt-4 flex flex-wrap gap-4 text-sm">
                     <div class="flex items-center gap-2">
                         <div class="w-4 h-4 rounded-full bg-safe-green"></div>
-                        <span>Minor (&lt; 4.0)</span>
+                        <span class="text-gray-700 dark:text-gray-300">Minor (&lt; 4.0)</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <div class="w-4 h-4 rounded-full bg-warning-yellow"></div>
-                        <span>Moderate (4.0 - 5.5)</span>
+                        <span class="text-gray-700 dark:text-gray-300">Moderate (4.0 - 5.5)</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <div class="w-4 h-4 rounded-full bg-orange-500"></div>
-                        <span>Strong (5.5 - 7.0)</span>
+                        <span class="text-gray-700 dark:text-gray-300">Strong (5.5 - 7.0)</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <div class="w-4 h-4 rounded-full bg-alert-red"></div>
-                        <span>Major (&gt; 7.0)</span>
+                        <span class="text-gray-700 dark:text-gray-300">Major (&gt; 7.0)</span>
                     </div>
                 </div>
             </div>
@@ -166,36 +206,102 @@
 
         <!-- Recent Earthquakes Section -->
         <section id="alerts" class="mb-8">
-            <div class="bg-white rounded-lg shadow p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-xl font-bold text-phivolcs-blue">Recent Earthquakes</h2>
-                    <button id="refresh-btn" class="bg-phivolcs-blue text-white px-4 py-2 rounded hover:bg-blue-800 transition">
-                        <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                        </svg>
-                        Refresh
+                    <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400">Recent Earthquakes</h2>
+                    <div class="flex gap-2">
+                        <button id="refresh-btn" class="bg-phivolcs-blue text-white px-4 py-2 rounded hover:bg-blue-800 transition">
+                            <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter and Export Controls -->
+                <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                        <div>
+                            <label for="filter-min-mag" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Min Magnitude</label>
+                            <input type="number" id="filter-min-mag" min="0" max="10" step="0.1" value="0" 
+                                   class="w-full border dark:border-gray-600 rounded px-3 py-2 dark:bg-gray-800 dark:text-white">
+                        </div>
+                        <div>
+                            <label for="filter-max-mag" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Max Magnitude</label>
+                            <input type="number" id="filter-max-mag" min="0" max="10" step="0.1" value="10" 
+                                   class="w-full border dark:border-gray-600 rounded px-3 py-2 dark:bg-gray-800 dark:text-white">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="filter-search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Search Location</label>
+                            <input type="text" id="filter-search" placeholder="Search by location..." 
+                                   class="w-full border dark:border-gray-600 rounded px-3 py-2 dark:bg-gray-800 dark:text-white">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 items-center justify-between">
+                        <div class="flex gap-2">
+                            <button id="export-csv" class="bg-safe-green text-white px-4 py-2 rounded hover:bg-green-700 transition text-sm">
+                                📊 Export CSV
+                            </button>
+                            <button id="export-json" class="bg-phivolcs-blue text-white px-4 py-2 rounded hover:bg-blue-800 transition text-sm">
+                                📄 Export JSON
+                            </button>
+                        </div>
+                        <div>
+                            <button id="enable-notifications" class="bg-warning-yellow text-gray-900 px-4 py-2 rounded hover:bg-yellow-600 transition text-sm">
+                                🔔 Enable Notifications
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sort Controls -->
+                <div class="mb-4 flex flex-wrap gap-2">
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Sort by:</span>
+                    <button id="sort-time" class="text-sm px-3 py-1 bg-gray-200 dark:bg-gray-600 rounded hover:bg-gray-300 dark:hover:bg-gray-500">
+                        Time ↕
+                    </button>
+                    <button id="sort-magnitude" class="text-sm px-3 py-1 bg-gray-200 dark:bg-gray-600 rounded hover:bg-gray-300 dark:hover:bg-gray-500">
+                        Magnitude ↕
+                    </button>
+                    <button id="sort-depth" class="text-sm px-3 py-1 bg-gray-200 dark:bg-gray-600 rounded hover:bg-gray-300 dark:hover:bg-gray-500">
+                        Depth ↕
+                    </button>
+                    <button id="sort-place" class="text-sm px-3 py-1 bg-gray-200 dark:bg-gray-600 rounded hover:bg-gray-300 dark:hover:bg-gray-500">
+                        Location ↕
                     </button>
                 </div>
-                <div id="earthquake-list" class="space-y-4">
-                    <div class="text-center text-gray-500 py-8">
+
+                <!-- Results Count -->
+                <p id="results-count" class="text-sm text-gray-600 dark:text-gray-400 mb-4">Loading earthquakes...</p>
+
+                <!-- Earthquake List -->
+                <div id="earthquake-list" class="space-y-4 mb-4">
+                    <div class="text-center text-gray-500 dark:text-gray-400 py-8">
                         <svg class="w-12 h-12 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         <p>Loading earthquake data...</p>
                     </div>
                 </div>
+
+                <!-- Pagination -->
+                <div id="pagination-controls" class="flex justify-center gap-2 flex-wrap">
+                    <!-- Pagination buttons will be dynamically inserted here -->
+                </div>
             </div>
         </section>
 
         <!-- Alert Configuration -->
         <section class="mb-8">
-            <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-xl font-bold text-phivolcs-blue mb-4">Alert Settings</h2>
-                <p class="text-gray-600 mb-4">Configure instant alerts for earthquakes in your area.</p>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400 mb-4">Alert Settings</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">Configure instant alerts for earthquakes in your area.</p>
                 <form id="alert-form" class="space-y-4">
                     <div>
-                        <label for="magnitude-threshold" class="block text-sm font-medium text-gray-700 mb-1">Alert Threshold (Magnitude)</label>
-                        <select id="magnitude-threshold" class="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-phivolcs-blue focus:border-transparent">
+                        <label for="magnitude-threshold" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Alert Threshold (Magnitude)</label>
+                        <select id="magnitude-threshold" class="w-full border dark:border-gray-600 rounded px-4 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-phivolcs-blue focus:border-transparent">
                             <option value="3.0">3.0 and above (All detected)</option>
                             <option value="4.0" selected>4.0 and above (Moderate)</option>
                             <option value="5.0">5.0 and above (Strong)</option>
@@ -203,8 +309,9 @@
                         </select>
                     </div>
                     <div>
-                        <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Your Location in Southern Leyte</label>
-                        <input type="text" id="location" placeholder="e.g., Maasin City, Sogod, Hinunangan" required class="w-full border border-gray-300 rounded px-4 py-2 focus:ring-2 focus:ring-phivolcs-blue focus:border-transparent">
+                        <label for="location" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Your Location in Southern Leyte</label>
+                        <input type="text" id="location" placeholder="e.g., Maasin City, Sogod, Hinunangan" required 
+                               class="w-full border dark:border-gray-600 rounded px-4 py-2 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-phivolcs-blue focus:border-transparent">
                     </div>
                     <button type="submit" class="bg-phivolcs-blue text-white px-6 py-2 rounded hover:bg-blue-800 transition">
                         Subscribe to Alerts
@@ -215,9 +322,9 @@
 
         <!-- Check-In Section -->
         <section id="checkin" class="mb-8">
-            <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-xl font-bold text-phivolcs-blue mb-4">Community Check-In</h2>
-                <p class="text-gray-600 mb-4">Let others know you're safe after an earthquake.</p>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400 mb-4">Community Check-In</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">Let others know you're safe after an earthquake.</p>
                 <button id="checkin-btn" class="bg-safe-green text-white px-6 py-3 rounded-lg hover:bg-green-700 transition w-full md:w-auto">
                     <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -232,18 +339,18 @@
 
         <!-- Education Section -->
         <section id="education" class="mb-8">
-            <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-xl font-bold text-phivolcs-blue mb-6">Earthquake Safety Guide</h2>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400 mb-6">Earthquake Safety Guide</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <div class="border rounded-lg p-4">
-                        <div class="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mb-3">
-                            <svg class="w-6 h-6 text-phivolcs-blue" fill="currentColor" viewBox="0 0 20 20">
+                    <div class="border dark:border-gray-600 rounded-lg p-4">
+                        <div class="bg-blue-100 dark:bg-blue-900 w-12 h-12 rounded-full flex items-center justify-center mb-3">
+                            <svg class="w-6 h-6 text-phivolcs-blue dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
                             </svg>
                         </div>
-                        <h3 class="font-bold text-lg mb-2">Before an Earthquake</h3>
-                        <ul class="text-sm text-gray-600 space-y-1">
+                        <h3 class="font-bold text-lg mb-2 text-gray-800 dark:text-gray-200">Before an Earthquake</h3>
+                        <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                             <li>• Secure heavy furniture and appliances</li>
                             <li>• Prepare an emergency kit</li>
                             <li>• Know your evacuation routes</li>
@@ -251,14 +358,14 @@
                         </ul>
                     </div>
 
-                    <div class="border rounded-lg p-4">
-                        <div class="bg-yellow-100 w-12 h-12 rounded-full flex items-center justify-center mb-3">
-                            <svg class="w-6 h-6 text-warning-yellow" fill="currentColor" viewBox="0 0 20 20">
+                    <div class="border dark:border-gray-600 rounded-lg p-4">
+                        <div class="bg-yellow-100 dark:bg-yellow-900 w-12 h-12 rounded-full flex items-center justify-center mb-3">
+                            <svg class="w-6 h-6 text-warning-yellow dark:text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                             </svg>
                         </div>
-                        <h3 class="font-bold text-lg mb-2">During an Earthquake</h3>
-                        <ul class="text-sm text-gray-600 space-y-1">
+                        <h3 class="font-bold text-lg mb-2 text-gray-800 dark:text-gray-200">During an Earthquake</h3>
+                        <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                             <li>• DROP, COVER, and HOLD ON</li>
                             <li>• Stay away from windows</li>
                             <li>• If outdoors, move to open area</li>
@@ -266,14 +373,14 @@
                         </ul>
                     </div>
 
-                    <div class="border rounded-lg p-4">
-                        <div class="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mb-3">
-                            <svg class="w-6 h-6 text-safe-green" fill="currentColor" viewBox="0 0 20 20">
+                    <div class="border dark:border-gray-600 rounded-lg p-4">
+                        <div class="bg-green-100 dark:bg-green-900 w-12 h-12 rounded-full flex items-center justify-center mb-3">
+                            <svg class="w-6 h-6 text-safe-green dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                             </svg>
                         </div>
-                        <h3 class="font-bold text-lg mb-2">After an Earthquake</h3>
-                        <ul class="text-sm text-gray-600 space-y-1">
+                        <h3 class="font-bold text-lg mb-2 text-gray-800 dark:text-gray-200">After an Earthquake</h3>
+                        <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                             <li>• Check for injuries and hazards</li>
                             <li>• Expect aftershocks</li>
                             <li>• Listen to emergency broadcasts</li>
@@ -282,32 +389,32 @@
                     </div>
                 </div>
 
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <h3 class="font-bold text-lg mb-3">Emergency Contacts</h3>
+                <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                    <h3 class="font-bold text-lg mb-3 text-gray-800 dark:text-gray-200">Emergency Contacts</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                         <div class="flex items-center gap-2">
                             <svg class="w-5 h-5 text-alert-red" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
                             </svg>
-                            <span><strong>NDRRMC:</strong> 911</span>
+                            <span class="text-gray-700 dark:text-gray-300"><strong>NDRRMC:</strong> 911</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg class="w-5 h-5 text-alert-red" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
                             </svg>
-                            <span><strong>PHIVOLCS:</strong> (02) 8426-1468 to 79</span>
+                            <span class="text-gray-700 dark:text-gray-300"><strong>PHIVOLCS:</strong> (02) 8426-1468 to 79</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg class="w-5 h-5 text-alert-red" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
                             </svg>
-                            <span><strong>Red Cross:</strong> 143</span>
+                            <span class="text-gray-700 dark:text-gray-300"><strong>Red Cross:</strong> 143</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg class="w-5 h-5 text-alert-red" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
                             </svg>
-                            <span><strong>PAGASA:</strong> (02) 8927-1335</span>
+                            <span class="text-gray-700 dark:text-gray-300"><strong>PAGASA:</strong> (02) 8927-1335</span>
                         </div>
                     </div>
                 </div>
@@ -316,7 +423,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-phivolcs-blue text-white py-6 mt-8">
+    <footer class="bg-phivolcs-blue dark:bg-gray-800 text-white py-6 mt-8">
         <div class="container mx-auto px-4 text-center">
             <p class="mb-2">Southern Leyte Earthquake Alert System</p>
             <p class="text-sm text-gray-300">Data source: USGS Earthquake API | For emergencies, call 911</p>
