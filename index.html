@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Southern Leyte Earthquake Alert System - Real-time monitoring and alerts for earthquake safety. Developed by John Rish Ladica using USGS API.">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https://*.openstreetmap.org; connect-src 'self' https://earthquake.usgs.gov; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://js.sentry-cdn.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https://*.openstreetmap.org; connect-src 'self' https://earthquake.usgs.gov https://sentry.io; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
     <meta name="theme-color" content="#003366">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="./src/style.css">
     <!-- Sentry Error Tracking (Optional - configure DSN in environment variables) -->
-    <script src="https://js.sentry-cdn.com/YOUR_SENTRY_KEY.min.js" crossorigin="anonymous" data-lazy="no"></script>
+    <!-- Sentry will be initialized via errorTrackingService.ts -->
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
     <!-- Navigation -->
