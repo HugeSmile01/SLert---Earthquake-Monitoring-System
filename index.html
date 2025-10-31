@@ -268,6 +268,22 @@
                 </div>
             </div>
 
+            <!-- Regional Coverage Selector -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+                <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400 mb-4">📍 Monitoring Region</h2>
+                <div id="region-selector-container">
+                    <!-- Will be populated by main.ts initialization -->
+                </div>
+            </div>
+
+            <!-- Advanced Statistics -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+                <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400 mb-4">📊 Advanced Statistics</h2>
+                <div id="advanced-stats-container">
+                    <p class="text-gray-500 dark:text-gray-400 text-center py-4">Loading statistics...</p>
+                </div>
+            </div>
+
             <!-- System Status -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
                 <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400 mb-4">System Status</h2>
@@ -479,6 +495,37 @@
             </div>
         </section>
 
+        <!-- Emergency Shelters Section -->
+        <section id="emergency-shelters" class="mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400">🏕️ Emergency Shelters & Evacuation Centers</h2>
+                    <div id="language-selector-container"></div>
+                </div>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">
+                    Find the nearest emergency shelters and evacuation centers in your area. In case of an earthquake, proceed to these locations for safety.
+                </p>
+                
+                <!-- Filter by Municipality -->
+                <div class="mb-4">
+                    <label for="shelter-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Filter by Municipality
+                    </label>
+                    <select id="shelter-filter" 
+                            class="w-full md:w-64 border dark:border-gray-600 rounded px-4 py-2 dark:bg-gray-700 dark:text-white">
+                        <option value="all">All Locations</option>
+                        <option value="southern-leyte">Southern Leyte</option>
+                        <option value="metro-manila">Metro Manila</option>
+                    </select>
+                </div>
+                
+                <!-- Shelters List -->
+                <div id="shelters-list" class="space-y-3">
+                    <p class="text-gray-500 dark:text-gray-400 text-center py-4">Loading emergency shelters...</p>
+                </div>
+            </div>
+        </section>
+
         <!-- Community News Section -->
         <section id="community-news" class="mb-8">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
@@ -563,6 +610,39 @@
                             <li>• Use check-in feature above</li>
                         </ul>
                     </div>
+                </div>
+
+                <!-- PHIVOLCS Intensity Scale -->
+                <div class="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-lg p-6 mb-6">
+                    <h3 class="font-bold text-xl mb-4 text-gray-800 dark:text-gray-200">🌊 PHIVOLCS Earthquake Intensity Scale (PEIS)</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                        The Philippine Institute of Volcanology and Seismology (PHIVOLCS) uses a 10-level intensity scale to measure earthquake effects.
+                    </p>
+                    <div id="intensity-scale-guide" class="grid grid-cols-2 md:grid-cols-5 gap-2">
+                        <div class="bg-white dark:bg-gray-700 rounded p-2 text-center">
+                            <div class="text-xl font-bold text-green-600">I-II</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Scarcely Felt</div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-700 rounded p-2 text-center">
+                            <div class="text-xl font-bold text-lime-600">III</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Weak</div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-700 rounded p-2 text-center">
+                            <div class="text-xl font-bold text-yellow-600">IV-V</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Moderate-Strong</div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-700 rounded p-2 text-center">
+                            <div class="text-xl font-bold text-orange-600">VI-VII</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Very Strong</div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-700 rounded p-2 text-center">
+                            <div class="text-xl font-bold text-red-600">VIII-X</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Devastating</div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-500 mt-3">
+                        <em>Note: Intensity (I-X) measures effects felt by people and damage to structures, while Magnitude (M) measures energy released.</em>
+                    </p>
                 </div>
 
                 <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">

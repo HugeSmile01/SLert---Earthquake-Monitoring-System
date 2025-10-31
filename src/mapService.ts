@@ -40,6 +40,12 @@ class MapService {
     this.markers = [];
   }
 
+  setView(lat: number, lng: number, zoom: number): void {
+    if (this.map) {
+      this.map.setView([lat, lng], zoom);
+    }
+  }
+
   addEarthquakeMarkers(earthquakes: Earthquake[]): void {
     if (!this.map) return;
 
