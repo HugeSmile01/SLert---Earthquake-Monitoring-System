@@ -729,7 +729,12 @@ function setupEventListeners(): void {
 
     // Initialize regional coverage selector
     try {
-      regionalCoverageService.initRegionSelector();
+      const regionContainer = document.getElementById('region-selector-container');
+      if (regionContainer) {
+        regionContainer.innerHTML = regionalCoverageService.getRegionSelectorHTML();
+        regionalCoverageService.initRegionSelector();
+      }
+      
       // Listen for region changes
       window.addEventListener('regionChanged', async () => {
         try {

@@ -84,7 +84,12 @@ class RegionalCoverageService {
   constructor() {
     // Load saved region or default to Southern Leyte
     const savedRegionId = localStorage.getItem('selected_region');
-    this.currentRegion = this.getRegion(savedRegionId || 'southern-leyte') || this.regions[0];
+    const defaultRegion = this.regions.length > 0 ? this.regions[0] : null;
+    this.currentRegion = this.getRegion(savedRegionId || 'southern-leyte') || defaultRegion!;
+    
+    if (!this.currentRegion) {
+      throw new Error('No regions available - check regionalCoverageService configuration');
+    }
   }
 
   /**

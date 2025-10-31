@@ -98,7 +98,18 @@ class IntensityScaleService {
 
   /**
    * Estimate intensity from magnitude and depth (simplified formula)
-   * This is an approximation based on common seismological relationships
+   * 
+   * This is a simplified approximation based on general seismological relationships.
+   * The actual intensity at any location depends on many factors including:
+   * - Distance from epicenter
+   * - Local geology and soil conditions
+   * - Building construction quality
+   * - Focal mechanism and rupture directivity
+   * 
+   * Formula basis: Higher magnitude and shallower depth generally correlate with higher intensity.
+   * Depth factor applies logarithmic attenuation (deeper earthquakes feel less intense at surface).
+   * 
+   * Note: For official intensity measurements, refer to PHIVOLCS intensity reports.
    */
   estimateIntensityFromMagnitude(magnitude: number, depthKm: number): IntensityLevel | null {
     if (magnitude < 2.0) return null;

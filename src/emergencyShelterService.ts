@@ -200,20 +200,33 @@ class EmergencyShelterService {
   }
 
   /**
+   * Escape HTML to prevent XSS attacks
+   */
+  private escapeHtml(text: string): string {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  /**
    * Get shelter card HTML
    */
   getShelterCardHTML(shelter: EmergencyShelter, distance?: number): string {
     const icon = this.getShelterIcon(shelter.type);
     const distanceText = distance ? `<span class="text-sm text-blue-600 dark:text-blue-400">📍 ${distance.toFixed(1)} km away</span>` : '';
     
+    // Escape HTML to prevent XSS
+    const escapedName = this.escapeHtml(shelter.name);
+    const escapedAddress = this.escapeHtml(shelter.address);
+    
     return `
       <div class="border dark:border-gray-600 rounded-lg p-4 bg-white dark:bg-gray-700 hover:shadow-md transition">
         <div class="flex items-start gap-3">
           <span class="text-3xl">${icon}</span>
           <div class="flex-1">
-            <h4 class="font-bold text-gray-800 dark:text-gray-200 mb-1">${shelter.name}</h4>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">${shelter.type} • ${shelter.municipality}</p>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">${shelter.address}</p>
+            <h4 class="font-bold text-gray-800 dark:text-gray-200 mb-1">${escapedName}</h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">${shelter.type} • ${this.escapeHtml(shelter.municipality)}</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">${escapedAddress}</p>
             ${distanceText}
             <div class="flex flex-wrap gap-2 mt-2">
               <span class="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-300 rounded">

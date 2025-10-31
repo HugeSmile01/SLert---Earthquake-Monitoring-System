@@ -271,16 +271,9 @@
             <!-- Regional Coverage Selector -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
                 <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400 mb-4">📍 Monitoring Region</h2>
-                <div id="region-selector-container"></div>
-                <script>
-                    // This will be populated by regionalCoverageService
-                    setTimeout(() => {
-                        const container = document.getElementById('region-selector-container');
-                        if (container && window.regionalCoverageService) {
-                            container.innerHTML = window.regionalCoverageService.getRegionSelectorHTML();
-                        }
-                    }, 1000);
-                </script>
+                <div id="region-selector-container">
+                    <!-- Will be populated by main.ts initialization -->
+                </div>
             </div>
 
             <!-- Advanced Statistics -->
