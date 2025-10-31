@@ -209,6 +209,20 @@ class EmergencyShelterService {
   }
 
   /**
+   * Escape string for use in JavaScript context (onclick attributes)
+   * Escapes single quotes, double quotes, backslashes, and other special characters
+   */
+  private escapeForJavaScript(text: string): string {
+    return text
+      .replace(/\\/g, '\\\\')  // Escape backslashes first
+      .replace(/'/g, "\\'")     // Escape single quotes
+      .replace(/"/g, '\\"')     // Escape double quotes
+      .replace(/\n/g, '\\n')    // Escape newlines
+      .replace(/\r/g, '\\r')    // Escape carriage returns
+      .replace(/\t/g, '\\t');   // Escape tabs
+  }
+
+  /**
    * Get shelter card HTML
    */
   getShelterCardHTML(shelter: EmergencyShelter, distance?: number): string {
@@ -248,7 +262,7 @@ class EmergencyShelterService {
                 `).join('')}
               </div>
             </div>
-            <button onclick="showShelterOnMap(${shelter.latitude}, ${shelter.longitude}, '${shelter.name.replace(/'/g, "\\'")}')" 
+            <button onclick="showShelterOnMap(${shelter.latitude}, ${shelter.longitude}, '${this.escapeForJavaScript(shelter.name)}')" 
                     class="mt-3 text-sm text-blue-600 dark:text-blue-400 hover:underline">
               📍 Show on Map
             </button>
