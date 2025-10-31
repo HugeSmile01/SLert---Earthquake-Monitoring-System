@@ -1,6 +1,6 @@
-# 🌏 Southern Leyte Earthquake Alert System
+# 🌏 Philippines Earthquake Monitoring & Alert System
 
-A comprehensive, real-time earthquake monitoring and alert system specifically designed for Southern Leyte, Philippines. This Progressive Web Application provides live earthquake data from USGS API, instant alerts using SweetAlert2, interactive maps, community check-in features, and educational resources.
+A comprehensive, real-time earthquake monitoring and alert system for the Philippines. Originally designed for Southern Leyte, now expanded to cover the entire Philippines archipelago. This Progressive Web Application provides live earthquake data from USGS API, instant alerts, interactive maps, emergency shelter locations, community features, and educational resources in both English and Filipino.
 
 **Developer:** John Rish Ladica - Southern Leyte, Philippines
 
@@ -9,23 +9,57 @@ A comprehensive, real-time earthquake monitoring and alert system specifically d
 ![System Status](https://img.shields.io/badge/status-active-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![PWA Ready](https://img.shields.io/badge/PWA-ready-purple)
+![Multilingual](https://img.shields.io/badge/languages-EN%20%7C%20FIL-blue)
 
-## 🚀 Features
+## 🆕 What Makes This System More Useful
 
-### Core Features
-- **Real-time Earthquake Monitoring** - Live data from USGS API filtered for Southern Leyte region
-- **Interactive Map Visualization** - Leaflet.js powered map showing earthquake locations and magnitudes
-- **SweetAlert2 Notifications** - Beautiful, user-friendly alerts for significant earthquakes
-- **Browser Push Notifications** - Real-time alerts for significant earthquakes using Browser Push API
-- **Progressive Web App** - Install as a mobile app with offline capability
-- **Offline Support** - Enhanced service worker with API data caching for offline viewing
-- **Local Data Caching** - IndexedDB for storing earthquake history and reducing API calls
-- **Community Check-In** - Let friends and family know you're safe after an earthquake
-- **Educational Resources** - Comprehensive earthquake preparedness and safety guides
-- **Historical Data** - View and analyze past earthquake records
-- **Responsive Design** - Mobile-first design works perfectly on all devices
-- **Enhanced Security** - Input validation, rate limiting, and CSP headers
-- **Reliable Data Fetching** - Automatic retry logic for API failures
+This system goes beyond basic earthquake monitoring with advanced features designed specifically for Filipino communities:
+
+### ✨ Advanced Features Not Found in Basic Monitoring Sites:
+- **🌐 Multi-Region Coverage** - Monitor any region in the Philippines, not just one area
+- **📊 PHIVOLCS Intensity Scale** - See estimated intensity (I-X) with educational descriptions
+- **🏕️ Emergency Shelter Locator** - Find nearest evacuation centers with contact info
+- **🌏 Bilingual Interface** - Full support for English and Filipino/Tagalog
+- **📈 Advanced Statistics** - Real-time trend analysis with hourly/daily/weekly counts
+- **🗺️ Smart Region Selector** - Automatically adjusts map view for selected region
+- **📱 Complete PWA** - Works offline with cached data
+- **👥 Community Features** - User check-ins, reports, and news sharing
+- **🔔 Smart Notifications** - Customizable alerts based on location and magnitude
+
+## 🚀 Core Features
+
+### Real-Time Monitoring
+- **Live Earthquake Data** - Updates every 60 seconds from USGS API
+- **Interactive Map** - Leaflet.js powered visualization with color-coded markers
+- **Intensity Badges** - PHIVOLCS Earthquake Intensity Scale (PEIS) indicators
+- **Auto-Refresh** - Continuous monitoring with automatic data updates
+- **Regional Filtering** - Focus on specific provinces or view nationwide
+
+### Multi-Region Support (NEW!)
+Monitor earthquakes in any Philippine region:
+- 📍 Southern Leyte (original, high seismic risk)
+- 📍 Metro Manila / NCR (West Valley Fault zone)
+- 📍 Mindanao Region (highly active seismic zone)
+- 📍 Visayas Region (Central Philippines)
+- 📍 Luzon Region (Northern Philippines)
+- 📍 Philippines Nationwide (complete coverage)
+
+Each region includes:
+- Custom geographic bounds
+- Seismic risk level indicators
+- Optimized map zoom and centering
+- Regional description and context
+
+### Emergency Response Tools
+- **🏕️ Shelter Locator** - Database of evacuation centers and emergency shelters
+  - Detailed facility information
+  - Contact numbers for emergencies
+  - Capacity and amenities listing
+  - "Show on Map" quick navigation
+  - Filter by province/municipality
+- **📞 Emergency Contacts** - Quick access to NDRRMC, PHIVOLCS, Red Cross
+- **✅ Community Check-In** - Mark yourself safe after an earthquake
+- **📱 Push Notifications** - Real-time alerts for significant events
 
 ### Data Visualization Features
 - **Magnitude Trends Chart** - Track average and maximum magnitude over time
@@ -41,12 +75,37 @@ A comprehensive, real-time earthquake monitoring and alert system specifically d
 - **Data Export** - Export filtered data as CSV or JSON
 
 ### User Interface Features
-- **Dark Mode** - Toggle between light and dark themes with automatic persistence
-- **Responsive Tables** - Mobile-friendly earthquake listings with pagination
-- **Sort Controls** - Click to sort data by various attributes
-- **Filter Controls** - Easy-to-use magnitude and location filters
+- **🌐 Bilingual Support** - Switch between English and Filipino/Tagalog
+- **🌙 Dark Mode** - Toggle between light and dark themes with automatic persistence
+- **📱 Responsive Design** - Optimized for mobile, tablet, and desktop
+- **♿ Accessible** - ARIA labels and keyboard navigation support
+- **🎨 Modern UI** - Clean, intuitive interface with Tailwind CSS
+- **⚡ Fast Loading** - Optimized bundle sizes and lazy loading
+
+### Advanced Statistics Dashboard (NEW!)
+Real-time analytics and insights:
+- **Hourly Activity** - Earthquakes in the last hour
+- **24-Hour Summary** - Last day's seismic activity
+- **Weekly Trends** - 7-day earthquake count
+- **Monthly Overview** - 30-day historical data
+- **Magnitude Analysis** - Min, max, and average magnitude
+- **Activity Trends** - Increasing/Decreasing/Stable indicators with visual icons
+- **Most Active Area** - Geographic hotspot identification
+- **Significant Events** - Count of M ≥ 5.0 earthquakes
+- **Critical Events** - Count of M ≥ 6.0 earthquakes
+- **Beautiful Visualizations** - Gradient cards with color-coded data
+
+### PHIVOLCS Intensity Scale Integration (NEW!)
+Educational earthquake intensity information:
+- **Intensity Badges** - Roman numeral (I-X) intensity indicators on all earthquakes
+- **Effect Descriptions** - Detailed explanations of what to expect at each level
+- **Color Coding** - Visual severity indicators (green to dark red)
+- **Educational Guide** - Complete PEIS scale with examples
+- **Estimated Calculations** - Automatic intensity estimation from magnitude and depth
+- **Hover Details** - Tooltip information on intensity effects
 
 ### Dashboard Statistics
+- Earthquakes in last hour (NEW!)
 - Earthquakes in last 24 hours
 - Earthquakes in last 7 days
 - Strongest earthquake today
