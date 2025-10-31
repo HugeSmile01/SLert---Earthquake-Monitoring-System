@@ -17,6 +17,8 @@ import { sidebarService } from './sidebarService';
 import { intensityScaleService } from './intensityScaleService';
 import { regionalCoverageService } from './regionalCoverageService';
 import { advancedStatisticsService } from './advancedStatisticsService';
+import { emergencyShelterService } from './emergencyShelterService';
+import { languageService } from './languageService';
 import type { Earthquake } from './types';
 
 let currentEarthquakes: Earthquake[] = [];
@@ -742,6 +744,31 @@ function setupEventListeners(): void {
       console.error('Error initializing regional coverage:', error);
     }
 
+    // Initialize language selector
+    try {
+      const langContainer = document.getElementById('language-selector-container');
+      if (langContainer) {
+        langContainer.innerHTML = languageService.getLanguageSelectorHTML();
+        languageService.initLanguageSelector();
+      }
+      
+      // Listen for language changes (for future UI translation updates)
+      window.addEventListener('languageChanged', (e: any) => {
+        console.log('Language changed to:', e.detail);
+        // Future: Update all UI text labels
+      });
+    } catch (error) {
+      console.error('Error initializing language service:', error);
+    }
+
+    // Initialize emergency shelters
+    try {
+      updateSheltersList();
+      document.getElementById('shelter-filter')?.addEventListener('change', updateSheltersList);
+    } catch (error) {
+      console.error('Error initializing shelters:', error);
+    }
+
     updateSystemStatus('alerts', 'online');
     updateSystemStatus('map', 'online');
     updateThemeIcon();
@@ -1046,6 +1073,53 @@ async function handleDonation(): Promise<void> {
   }
 };
 
+function updateSheltersList(): void {
+  try {
+    const container = document.getElementById('shelters-list');
+    const filterSelect = document.getElementById('shelter-filter') as HTMLSelectElement;
+    
+    if (!container) {
+      console.warn('Shelters list container not found');
+      return;
+    }
+
+    const filterValue = filterSelect?.value || 'all';
+    let shelters;
+
+    if (filterValue === 'all') {
+      shelters = emergencyShelterService.getAllShelters();
+    } else if (filterValue === 'southern-leyte') {
+      shelters = emergencyShelterService.getSheltersByProvince('Southern Leyte');
+    } else if (filterValue === 'metro-manila') {
+      shelters = emergencyShelterService.getSheltersByProvince('Metro Manila');
+    } else {
+      shelters = emergencyShelterService.getAllShelters();
+    }
+
+    container.innerHTML = emergencyShelterService.getSheltersListHTML(shelters);
+  } catch (error) {
+    console.error('Error updating shelters list:', error);
+    errorTrackingService.captureException(error as Error, { context: 'updateSheltersList' });
+  }
+}
+
+(window as any).showShelterOnMap = (lat: number, lng: number, name: string) => {
+  try {
+    mapService.setView(lat, lng, 15);
+    
+    // Scroll to map
+    const mapSection = document.getElementById('map');
+    if (mapSection) {
+      mapSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    alertService.showAlert(`Showing ${name} on the map`, 'info');
+  } catch (error) {
+    console.error('Error showing shelter on map:', error);
+    alertService.showAlert('Failed to show shelter on map', 'danger');
+  }
+};
+
 (window as any).closeAlert = () => {
   try {
     alertService.hideAlert();
@@ -1060,6 +1134,8 @@ async function handleDonation(): Promise<void> {
 // Expose services to window for inline scripts
 (window as any).regionalCoverageService = regionalCoverageService;
 (window as any).intensityScaleService = intensityScaleService;
+(window as any).emergencyShelterService = emergencyShelterService;
+(window as any).languageService = languageService;
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {

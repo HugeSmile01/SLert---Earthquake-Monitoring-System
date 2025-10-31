@@ -502,6 +502,37 @@
             </div>
         </section>
 
+        <!-- Emergency Shelters Section -->
+        <section id="emergency-shelters" class="mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400">🏕️ Emergency Shelters & Evacuation Centers</h2>
+                    <div id="language-selector-container"></div>
+                </div>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">
+                    Find the nearest emergency shelters and evacuation centers in your area. In case of an earthquake, proceed to these locations for safety.
+                </p>
+                
+                <!-- Filter by Municipality -->
+                <div class="mb-4">
+                    <label for="shelter-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Filter by Municipality
+                    </label>
+                    <select id="shelter-filter" 
+                            class="w-full md:w-64 border dark:border-gray-600 rounded px-4 py-2 dark:bg-gray-700 dark:text-white">
+                        <option value="all">All Locations</option>
+                        <option value="southern-leyte">Southern Leyte</option>
+                        <option value="metro-manila">Metro Manila</option>
+                    </select>
+                </div>
+                
+                <!-- Shelters List -->
+                <div id="shelters-list" class="space-y-3">
+                    <p class="text-gray-500 dark:text-gray-400 text-center py-4">Loading emergency shelters...</p>
+                </div>
+            </div>
+        </section>
+
         <!-- Community News Section -->
         <section id="community-news" class="mb-8">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
