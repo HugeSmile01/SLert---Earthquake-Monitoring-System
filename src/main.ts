@@ -14,6 +14,9 @@ import { communityService } from './communityService';
 import { adminService } from './adminService';
 import { userAuthService } from './userAuthService';
 import { sidebarService } from './sidebarService';
+import { intensityScaleService } from './intensityScaleService';
+import { regionalCoverageService } from './regionalCoverageService';
+import { advancedStatisticsService } from './advancedStatisticsService';
 import type { Earthquake } from './types';
 
 let currentEarthquakes: Earthquake[] = [];
@@ -211,6 +214,17 @@ function updateDashboard(earthquakes: Earthquake[]): void {
       const alertsCount = last24h.filter(eq => eq.magnitude >= 4.0).length;
       statAlertsEl.textContent = alertsCount.toString();
     }
+
+    // Update advanced statistics
+    try {
+      const stats = advancedStatisticsService.calculateStatistics(earthquakes);
+      const statsContainer = document.getElementById('advanced-stats-container');
+      if (statsContainer) {
+        statsContainer.innerHTML = advancedStatisticsService.getStatisticsHTML(stats);
+      }
+    } catch (statsError) {
+      console.error('Error updating advanced statistics:', statsError);
+    }
   } catch (error) {
     console.error('Error updating dashboard:', error);
     errorTrackingService.captureException(error as Error, { context: 'updateDashboard' });
@@ -244,6 +258,7 @@ function updateEarthquakeList(earthquakes: Earthquake[]): void {
         const color = earthquakeService.getMagnitudeColor(earthquake.magnitude);
         const label = earthquakeService.getMagnitudeLabel(earthquake.magnitude);
         const time = earthquakeService.formatTime(earthquake.time);
+        const intensityBadge = intensityScaleService.getIntensityBadge(earthquake.magnitude, earthquake.depth);
         const editedLabel = earthquake.editedByAdmin ? 
           '<span class="ml-2 px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 text-xs rounded">✏️ Edited by Admin</span>' : '';
 
@@ -259,6 +274,7 @@ function updateEarthquakeList(earthquakes: Earthquake[]): void {
                         style="background-color: ${color}; color: white;">
                     ${label}
                   </span>
+                  ${intensityBadge}
                   ${editedLabel}
                 </div>
                 <p class="text-gray-800 dark:text-gray-200 font-medium mb-1">${earthquake.place}</p>
@@ -709,6 +725,23 @@ function setupEventListeners(): void {
     document.getElementById('news-content')?.addEventListener('input', updateCharCount);
     document.getElementById('donate-btn')?.addEventListener('click', handleDonation);
 
+    // Initialize regional coverage selector
+    try {
+      regionalCoverageService.initRegionSelector();
+      // Listen for region changes
+      window.addEventListener('regionChanged', async () => {
+        try {
+          await refreshData();
+          const region = regionalCoverageService.getCurrentRegion();
+          mapService.setView(region.center.lat, region.center.lng, region.zoom);
+        } catch (error) {
+          console.error('Error handling region change:', error);
+        }
+      });
+    } catch (error) {
+      console.error('Error initializing regional coverage:', error);
+    }
+
     updateSystemStatus('alerts', 'online');
     updateSystemStatus('map', 'online');
     updateThemeIcon();
@@ -1023,6 +1056,10 @@ async function handleDonation(): Promise<void> {
 
 (window as any).changePage = changePage;
 (window as any).sortBy = sortBy;
+
+// Expose services to window for inline scripts
+(window as any).regionalCoverageService = regionalCoverageService;
+(window as any).intensityScaleService = intensityScaleService;
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {

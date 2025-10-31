@@ -268,6 +268,29 @@
                 </div>
             </div>
 
+            <!-- Regional Coverage Selector -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+                <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400 mb-4">📍 Monitoring Region</h2>
+                <div id="region-selector-container"></div>
+                <script>
+                    // This will be populated by regionalCoverageService
+                    setTimeout(() => {
+                        const container = document.getElementById('region-selector-container');
+                        if (container && window.regionalCoverageService) {
+                            container.innerHTML = window.regionalCoverageService.getRegionSelectorHTML();
+                        }
+                    }, 1000);
+                </script>
+            </div>
+
+            <!-- Advanced Statistics -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+                <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400 mb-4">📊 Advanced Statistics</h2>
+                <div id="advanced-stats-container">
+                    <p class="text-gray-500 dark:text-gray-400 text-center py-4">Loading statistics...</p>
+                </div>
+            </div>
+
             <!-- System Status -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
                 <h2 class="text-xl font-bold text-phivolcs-blue dark:text-blue-400 mb-4">System Status</h2>
@@ -563,6 +586,39 @@
                             <li>• Use check-in feature above</li>
                         </ul>
                     </div>
+                </div>
+
+                <!-- PHIVOLCS Intensity Scale -->
+                <div class="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-lg p-6 mb-6">
+                    <h3 class="font-bold text-xl mb-4 text-gray-800 dark:text-gray-200">🌊 PHIVOLCS Earthquake Intensity Scale (PEIS)</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                        The Philippine Institute of Volcanology and Seismology (PHIVOLCS) uses a 10-level intensity scale to measure earthquake effects.
+                    </p>
+                    <div id="intensity-scale-guide" class="grid grid-cols-2 md:grid-cols-5 gap-2">
+                        <div class="bg-white dark:bg-gray-700 rounded p-2 text-center">
+                            <div class="text-xl font-bold text-green-600">I-II</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Scarcely Felt</div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-700 rounded p-2 text-center">
+                            <div class="text-xl font-bold text-lime-600">III</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Weak</div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-700 rounded p-2 text-center">
+                            <div class="text-xl font-bold text-yellow-600">IV-V</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Moderate-Strong</div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-700 rounded p-2 text-center">
+                            <div class="text-xl font-bold text-orange-600">VI-VII</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Very Strong</div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-700 rounded p-2 text-center">
+                            <div class="text-xl font-bold text-red-600">VIII-X</div>
+                            <div class="text-xs text-gray-600 dark:text-gray-400">Devastating</div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-500 mt-3">
+                        <em>Note: Intensity (I-X) measures effects felt by people and damage to structures, while Magnitude (M) measures energy released.</em>
+                    </p>
                 </div>
 
                 <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
