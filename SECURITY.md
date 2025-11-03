@@ -45,8 +45,10 @@ CSP headers configured to restrict:
 - Script sources to self and trusted CDNs
 - Style sources to self and trusted CDNs
 - Image sources to self, data URLs, and OpenStreetMap
-- API connections to USGS only
+- API connections to trusted data sources
 - No frame embedding allowed
+
+**Note:** For accurate and official earthquake information, users should verify with PHIVOLCS (https://earthquake.phivolcs.dost.gov.ph/), the authoritative source for earthquake data in the Philippines.
 
 ### Future Security Enhancements
 1. **Server-side rate limiting** - Move from localStorage to server-based rate limiting using IP addresses

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Southern Leyte Earthquake Alert System - Real-time monitoring and alerts for earthquake safety. Developed by John Rish Ladica using USGS API.">
+    <meta name="description" content="Southern Leyte Earthquake Alert System - Real-time monitoring and alerts for earthquake safety. Developed by John Rish Ladica. For official data, verify with PHIVOLCS.">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://js.sentry-cdn.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https://*.openstreetmap.org; connect-src 'self' https://earthquake.usgs.gov https://sentry.io; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
     <meta name="theme-color" content="#003366">
     <meta name="mobile-web-app-capable" content="yes">
@@ -207,6 +207,30 @@
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-6">
+        <!-- PHIVOLCS Verification Banner -->
+        <div class="bg-yellow-50 dark:bg-yellow-900 border-l-4 border-yellow-500 dark:border-yellow-400 p-4 mb-6 rounded-lg shadow">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <svg class="h-6 w-6 text-yellow-600 dark:text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-sm font-semibold text-yellow-800 dark:text-yellow-200">
+                        ⚠️ Important: For accurate and official earthquake information
+                    </p>
+                    <p class="mt-1 text-sm text-yellow-700 dark:text-yellow-300">
+                        Please verify all earthquake data with the official source: 
+                        <a href="https://earthquake.phivolcs.dost.gov.ph/" target="_blank" rel="noopener noreferrer" 
+                           class="font-bold underline hover:text-yellow-900 dark:hover:text-yellow-100">
+                            PHIVOLCS (Philippine Institute of Volcanology and Seismology)
+                        </a>
+                        | Contact: (02) 8426-1468 to 79
+                    </p>
+                </div>
+            </div>
+        </div>
+        
         <!-- Dashboard Section -->
         <section id="dashboard" class="mb-8">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -290,7 +314,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="flex items-center gap-3">
                         <div id="status-api" class="w-3 h-3 rounded-full bg-safe-green"></div>
-                        <span class="text-gray-700 dark:text-gray-300">USGS API</span>
+                        <span class="text-gray-700 dark:text-gray-300">Data Service</span>
                     </div>
                     <div class="flex items-center gap-3">
                         <div id="status-alerts" class="w-3 h-3 rounded-full bg-safe-green"></div>
@@ -658,7 +682,9 @@
                             <svg class="w-5 h-5 text-alert-red" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
                             </svg>
-                            <span class="text-gray-700 dark:text-gray-300"><strong>PHIVOLCS:</strong> (02) 8426-1468 to 79</span>
+                            <span class="text-gray-700 dark:text-gray-300"><strong>PHIVOLCS:</strong> (02) 8426-1468 to 79 | 
+                                <a href="https://earthquake.phivolcs.dost.gov.ph/" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:text-blue-700 underline">Official Data</a>
+                            </span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg class="w-5 h-5 text-alert-red" fill="currentColor" viewBox="0 0 20 20">
@@ -682,10 +708,15 @@
     <footer class="bg-phivolcs-blue dark:bg-gray-800 text-white py-6 mt-8">
         <div class="container mx-auto px-4 text-center">
             <p class="mb-2">Southern Leyte Earthquake Alert System</p>
-            <p class="text-sm text-gray-300">Data source: USGS Earthquake API | For emergencies, call 911</p>
+            <p class="text-sm text-gray-300">
+                <strong>⚠️ For accurate and official earthquake information, always verify with 
+                <a href="https://earthquake.phivolcs.dost.gov.ph/" target="_blank" rel="noopener noreferrer" class="text-yellow-300 hover:text-yellow-100 underline font-semibold">PHIVOLCS</a>
+                </strong>
+            </p>
+            <p class="text-xs text-gray-400 mt-2">Data sourced from USGS API | For emergencies, call 911 or PHIVOLCS: (02) 8426-1468 to 79</p>
             <p class="text-xs text-gray-400 mt-2">Developed by John Rish Ladica - Southern Leyte, Philippines</p>
             <p class="text-xs text-gray-400 mt-1">⚠️ This is an independent system based on public APIs. Not an official government system.</p>
-            <p class="text-xs text-gray-400 mt-1">Data accuracy depends on the USGS API. Always follow official government alerts and guidelines.</p>
+            <p class="text-xs text-gray-400 mt-1">Always follow official government alerts and guidelines from PHIVOLCS and NDRRMC.</p>
         </div>
     </footer>
 
