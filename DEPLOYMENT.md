@@ -197,7 +197,8 @@ Update `src/emailService.ts` with your email service provider credentials.
 ### 3. Test Features
 - [ ] Dashboard loads correctly
 - [ ] Map displays (check CORS for OpenStreetMap)
-- [ ] Earthquake data fetches from USGS
+- [ ] Earthquake data fetches successfully
+- [ ] PHIVOLCS verification links work
 - [ ] Email subscription form works
 - [ ] Check-in feature works
 - [ ] Mobile responsiveness
@@ -222,17 +223,19 @@ npx lighthouse http://your-domain.com --view
 
 ### Health Check Endpoint
 The system status shows:
-- PHIVOLCS API status
+- Data Service status
 - Email Service status
 - Map Service status
+
+**Note:** For official and accurate earthquake data, users should verify with PHIVOLCS at https://earthquake.phivolcs.dost.gov.ph/
 
 ## Troubleshooting
 
 ### Issue: Map tiles not loading
 **Solution:** Check CORS settings and ensure OpenStreetMap tiles are accessible.
 
-### Issue: USGS API blocked
-**Solution:** The API should work without authentication. Check network connectivity and CORS.
+### Issue: Data API issues
+**Solution:** The system fetches data from public APIs. For official and accurate information, always verify with PHIVOLCS (https://earthquake.phivolcs.dost.gov.ph/). Check network connectivity and CORS settings.
 
 ### Issue: Email not sending
 **Solution:** Verify email service provider credentials and API limits.
@@ -269,7 +272,8 @@ npm audit fix
 ```
 
 ### Data Source Monitoring:
-- Monitor USGS API status
+- Monitor data service status
+- Check PHIVOLCS website for official updates (https://earthquake.phivolcs.dost.gov.ph/)
 - Check for API changes
 - Verify Philippines region data accuracy
 

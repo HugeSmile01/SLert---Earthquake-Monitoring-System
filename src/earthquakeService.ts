@@ -1,6 +1,18 @@
 import type { Earthquake, EarthquakeResponse } from './types';
 import { indexedDBService } from './indexedDBService';
 
+/**
+ * Earthquake Service
+ * 
+ * IMPORTANT: For accurate and official earthquake information, always verify with
+ * PHIVOLCS (Philippine Institute of Volcanology and Seismology):
+ * https://earthquake.phivolcs.dost.gov.ph/
+ * Contact: (02) 8426-1468 to 79
+ * 
+ * This service uses USGS API for data fetching, but PHIVOLCS is the authoritative
+ * source for earthquake data in the Philippines.
+ */
+
 const USGS_API_BASE = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary';
 const SOUTHERN_LEYTE_BOUNDS = {
   minLat: 9.8,

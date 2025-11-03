@@ -4,7 +4,7 @@ A comprehensive, real-time earthquake monitoring and alert system for the Philip
 
 **Developer:** John Rish Ladica - Southern Leyte, Philippines
 
-**⚠️ Important Disclaimer:** This is an independent system created by a developer from Southern Leyte. It is NOT an official government system. The system uses publicly available APIs (USGS Earthquake API) to fetch earthquake data. Any inaccuracies in the data are from the source API, not from this system. Always follow official government alerts and guidelines from PHIVOLCS and NDRRMC.
+**⚠️ Important Disclaimer:** This is an independent system created by a developer from Southern Leyte. It is NOT an official government system. **For accurate and official earthquake information, always verify with [PHIVOLCS (Philippine Institute of Volcanology and Seismology)](https://earthquake.phivolcs.dost.gov.ph/)** - the authoritative source for earthquake data in the Philippines. The system uses publicly available APIs (USGS Earthquake API) to fetch earthquake data. Any inaccuracies in the data are from the source API, not from this system. Always follow official government alerts and guidelines from PHIVOLCS and NDRRMC.
 
 ![System Status](https://img.shields.io/badge/status-active-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
@@ -386,16 +386,21 @@ View metrics in browser console or implement custom dashboard.
 
 ## 📊 API Data Sources
 
-### Primary Data Source: USGS Earthquake API
+### ⚠️ Official Authoritative Source: PHIVOLCS
+- **PHIVOLCS:** https://earthquake.phivolcs.dost.gov.ph/ (Official Philippine seismology institute)
+- **Contact:** (02) 8426-1468 to 79
+- **ALWAYS verify earthquake information with PHIVOLCS for accuracy**
+- PHIVOLCS is the official government agency responsible for earthquake monitoring in the Philippines
+
+### Data Fetching Source: USGS Earthquake API
 - **Endpoint:** `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson`
 - **Update Frequency:** Every 60 seconds
 - **Geographic Filter:** Philippines region (4.5°N-21°N, 116°E-127°E)
-- **Note:** All earthquake data comes from USGS. Any inaccuracies are from the source API, not this application.
+- **Note:** This system uses USGS API for data fetching, but all earthquake information should be verified with PHIVOLCS, the official Philippine authority.
 
 ### Emergency Information Source
-- **PHIVOLCS:** https://www.phivolcs.dost.gov.ph/ (Official Philippine seismology institute)
 - **NDRRMC:** For disaster response coordination
-- Always follow official government alerts and guidelines
+- Always follow official government alerts and guidelines from PHIVOLCS and NDRRMC
 
 ## 🎨 Customization
 
@@ -565,7 +570,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🙏 Acknowledgments
 
-- **USGS** - For providing free earthquake data API
+- **PHIVOLCS** - Official Philippine Institute of Volcanology and Seismology - the authoritative source for earthquake information in the Philippines
+- **USGS** - For providing free earthquake data API used for data fetching
 - **OpenStreetMap** - For map tiles
 - **Leaflet.js** - For map visualization
 - **SweetAlert2** - For beautiful alert notifications
@@ -586,11 +592,13 @@ For questions, suggestions, or support:
 
 **IMPORTANT:** This is an independent system created by John Rish Ladica from Southern Leyte, Philippines. It is NOT an official government system.
 
-- The system uses the USGS Earthquake API to fetch earthquake data
-- Any inaccuracies in earthquake data are from the source API (USGS), not from this system
-- This system is designed to complement official government alerts
+- **For official and accurate earthquake information, ALWAYS verify with [PHIVOLCS](https://earthquake.phivolcs.dost.gov.ph/)** - the authoritative source
+- The system uses the USGS Earthquake API to fetch earthquake data for display purposes only
+- Any inaccuracies in earthquake data should be verified with PHIVOLCS, not this system
+- This system is designed to complement official government alerts, not replace them
 - **Do NOT rely on this as the sole source of earthquake information**
 - Always follow official guidance from PHIVOLCS, NDRRMC, and local authorities during emergencies
+- PHIVOLCS Contact: (02) 8426-1468 to 79
 - The developer and this system are not responsible for any damages or losses resulting from the use of this application
 
 ---
